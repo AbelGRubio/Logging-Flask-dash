@@ -100,3 +100,10 @@ a:active {
   text-decoration: none;
   display: inline-block;
 }
+
+.hidden-option
+{
+  visibility: hidden;
+
+}
+

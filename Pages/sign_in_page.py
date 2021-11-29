@@ -49,11 +49,12 @@ def add_callback_sign_in(app):
          ],
     )
     def update_output(n_clicks, email, password):
-        print('Ha entrado en el callback de la funcion de sign in')
-        res = 'The input value was "{}" and the button has been clicked {} times'.format(
-            email,
-            n_clicks
-        )
+        # print('Ha entrado en el callback de la funcion de sign in')
+        # res = 'The input value was "{}" and the button has been clicked {} times'.format(
+        #     email,
+        #     n_clicks
+        # )
+        res = 'Fallo al registrarse'
         if check_user(email, password):
             try:
                 password_hash = user_get_password_hash(email)
@@ -62,11 +63,11 @@ def add_callback_sign_in(app):
                                 email=email,
                                 password_hash=password_hash)
                 SysConfig.CURRENT_USERS[id_user] = new_user
-                print('ff = 1')
+                # print('ff = 1')
                 login_user(new_user)
+                res = 'Ha entrado el usuario'
             except Exception as e:
                 print('FALLO {}'.format(e))
-            res = 'Ha entrado '
         return res
 
 

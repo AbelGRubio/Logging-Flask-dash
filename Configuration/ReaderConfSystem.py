@@ -30,6 +30,7 @@ try:
     CALLBACK_RECOVER_ACCOUNT = False
     CALLBACK_NEW_PASSWORD = False
     CALLBACK_SUCESSFUL = False
+    CALLBACK_HEADER = False
 
     LOGIN_MANAGER = LoginManager()
 
