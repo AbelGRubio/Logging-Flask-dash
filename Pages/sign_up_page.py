@@ -1,92 +1,95 @@
 import dash_html_components as html
 import dash_core_components as dcc
 from dash.dependencies import Input, Output, State
-import os
 from Pages.header import Header
 import Configuration.ReaderConfSystem as SysConfig
-import datetime
+from Configuration.admin_users import is_new_user
+from email_validator import validate_email, EmailNotValidError
 
 
 def create_layout(app):
     web = html.Div(
         [Header(app),
          html.Div(
-         [
-            html.H1(["Sign up"], style={'color': 'blue'}),
-            html.Div(dcc.Input(id='input-user', type='text', placeholder="Your username...")),
-            html.Div(dcc.Input(id='input-email', type='text', placeholder="Your email...")),
-            html.Div(dcc.Input(id='input-password', type='text', placeholder="Your password...")),
-            html.Div(dcc.Input(id='input-confirm-password', type='text', placeholder="Confirm your password...")),
-            html.Button('Register', id='register-val', n_clicks=0),
-            html.H6(id='container-button-basic',
-                    children='Fill the form and press Register')
-         ],
-         className="row text-align-center margin-10px",
+             [
+                 html.H1(["Sign up"], style={'color': 'blue'}),
+                 html.Div(dcc.Input(id='input-username', type='text', placeholder="Your username...")),
+                 html.Div(dcc.Input(id='input-email', type='text', placeholder="Your email...")),
+                 html.Div(dcc.Input(id='input-password', type='text', placeholder="Your password...")),
+                 html.Div(dcc.Input(id='input-confirm-password', type='text', placeholder="Confirm your password...")),
+                 html.Button(children='Register', id='register-button', n_clicks=0),
+                 html.H6(id='tituloh6', children='Fill the form and press Register')
+             ],
+             className="row text-align-center margin-10px",
          ),
          ],
         className="page",
     )
-    print('ha cargado la pagina de registro {}'.format(datetime.datetime.now()))
-    print('Status load callback {}'.format(SysConfig.LOADED_TABLE))
-    if not SysConfig.LOADED_TABLE:
+    # print('ha cargado la pagina de registro {}'.format(datetime.datetime.now()))
+    # print('Status load callback {}'.format(SysConfig.CALLBACK_SIGN_UP))
+    if not SysConfig.CALLBACK_SIGN_UP:
         try:
-            add_callback(app)
-            SysConfig.LOADED_TABLE = True
+            add_callback_sign_up(app)
+            SysConfig.CALLBACK_SIGN_UP = True
+            # print('Añadido el callback {}'.format(SysConfig.CALLBACK_SIGN_UP))
         except Exception as e:
             print('El error es {}'.format(e))
+            pass
     return web
 
 
-def add_callback(app):
-    # @app.callback(
-    #     Output("container", "children"),
-    #     [Input("upload-data", "filename"), Input("upload-data", "contents")],
-    # )
-    # def update_output(uploaded_filenames, uploaded_file_contents):
-    #     """Save uploaded files and regenerate the file list."""
-    #     directory = 'checkFile'
-    #     name = ''
-    #     if uploaded_filenames is not None and uploaded_file_contents is not None:
-    #         for name, data in zip(uploaded_filenames, uploaded_file_contents):
-    #             print(os.path.join(directory, name))
-    #             # save_file(name, data, directory=directory)
-    #     try:
-    #         print('Hola')
-    #         # pathFile = os.path.join(MAIN_DIRECTORY, UPLOAD_DIRECTORY, 'checkFile',
-    #         #                         name)
-    #         # pathFile = 'checkFile\\2021_03_31_10_19_23_PredictionError_CH_2.bin'
-    #         # pathFile = os.path.join(directory, name)
-    #         # stats = getStatFile(pathFile)
-    #     except Exception as e:
-    #         stats = [0, 0, 0]
-    #
-    #     return html.Div([
-    #         html.Table([
-    #             html.Tr([html.Th('Hz file'),
-    #                      html.Th('nPoints'),
-    #                      html.Th('Percentage')]),
-    #             html.Tr([html.Td(1000),
-    #                      html.Td(6000),
-    #                      html.Td(95)])],
-    #             style={'width': '70%', 'margin-left': '15%', 'margin-right': '15%'},
-    #         )
-    #     ])
-    #
-    #     # files = uploaded_files(directory=directory)
-    #     # if len(files) == 0:
-    #     #     return [html.Li("No files yet!")]
-    #     # else:
-    #     #     return [html.Li(file_download_link(filename)) for filename in files]
+def add_callback_sign_up(app):
     @app.callback(
-        [Output(component_id='container-button-basic', component_property='children')],
-        [Input(component_id='register-val', component_property='n_clicks')],
-        [State('input-user', 'value')],
+        Output(component_id='tituloh6', component_property='children'),
+        [Input(component_id='register-button', component_property='n_clicks')],
+        [State(component_id='input-username', component_property='value'),
+         State(component_id='input-email', component_property='value'),
+         State(component_id='input-password', component_property='value'),
+         State(component_id='input-confirm-password', component_property='value')],
     )
-    def update_output(n_clicks, value):
+    def update_output(n_clicks, username, email, password, confirm_password):
         print('Ha entrado en el callback de la funcion')
-        # value = 1
-        # n_clicks = 20
-        return 'The input value was "{}" and the button has been clicked {} times'.format(
-            value,
-            n_clicks
-        )
+        print([username, email, password, confirm_password])
+        res = 'The input values are: {}, {}, {}, {}'.format(username, email, password, confirm_password)
+        if None in [username, email, password, confirm_password]:
+            return 'Fill the form and press Register'
+        elif password != confirm_password:
+            return 'Please the password is not the same'
+        else:
+            pass
+        try:
+            valid = validate_email(email)
+            email = valid.email
+
+            if is_new_user(username=username, email=email, password=password):
+                res = 'User register complete!'
+            else:
+                res = 'The user already exists'
+
+        except EmailNotValidError as e:
+            res = 'Email not valid'
+        return res
+
+
+# def is_new_user(username: str, email, password):
+#
+#     try:
+#         df = pd.read_csv('Users.txt', sep='\t')
+#     except Exception:
+#         df = pd.DataFrame([], columns=['id', 'Username', 'Email', 'Password'])
+#
+#     try:
+#         if username not in df['Username'].unique() and email not in df['Email'].unique():
+#             new_df = pd.DataFrame([], columns=['id', 'Username', 'Email', 'Password'])
+#             password = generate_password_hash(password)
+#             random_id = int(np.random.random() * (2 ** 20 - 1))
+#             new_df = new_df.append(dict(zip(new_df.columns, [random_id, username.lower(), email, password])),
+#                                    ignore_index=True)
+#             df_to_save = new_df.append(df)
+#             df_to_save.to_csv('Users.txt', sep='\t', index=False)
+#             return True
+#         else:
+#             return False
+#     except Exception as e:
+#         print('ERROR: {}'.format(e))
+#         return False

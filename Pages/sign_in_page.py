@@ -1,9 +1,10 @@
 import dash_html_components as html
 import dash_core_components as dcc
 from dash.dependencies import Input, Output, State
-import os
 from Pages.header import Header
 import Configuration.ReaderConfSystem as SysConfig
+from Configuration.admin_users import check_user, user_get_id, user_get_password_hash, User
+from flask_login import login_user, logout_user, current_user, UserMixin
 
 
 def create_layout(app):
@@ -12,78 +13,107 @@ def create_layout(app):
          html.Div(
          [
             html.H1(["Sign in"], style={'color': 'blue'}),
-            html.Div(dcc.Input(id='input-email', type='text', placeholder="Your email...")),
-            html.Div(dcc.Input(id='input-password', type='text', placeholder="Your password...")),
+            html.Div(dcc.Input(id='input-email-sign-in', type='text', placeholder="Your email...")),
+            html.Div(dcc.Input(id='input-password-sign-in', type='text', placeholder="Your password...")),
             html.Button('Sign in', id='submit-val', n_clicks=0),
             html.H6(['New in {}? '.format(SysConfig.NAME_SERVER),
                      dcc.Link(
                          "Create an account",
                          href="/sign_up_page",
                      ), ]),
-            html.H6([dcc.Link("Forgot the password?", href="/recover_account_page"), ])
+            html.H6([dcc.Link(children="Forgot the password?", href="/recover_account_page"), ]),
+            html.H6(id='titulo-sign-in', children='Fill the form and press sign in')
          ],
          className="row text-align-center",
          ),
          ],
         className="page",
     )
-    # add_callback(app)
-    if not SysConfig.LOADED_TABLE:
+    if not SysConfig.CALLBACK_SIGN_IN:
         try:
-            add_callback(app)
+            add_callback_sign_in(app)
+            SysConfig.CALLBACK_SIGN_IN = True
         except Exception as e:
+            print('El error es {}'.format(e))
             pass
-        SysConfig.LOADED_TABLE = True
+
     return web
 
 
-def add_callback(app):
-    # @app.callback(
-    #     Output("container", "children"),
-    #     [Input("upload-data", "filename"), Input("upload-data", "contents")],
-    # )
-    # def update_output(uploaded_filenames, uploaded_file_contents):
-    #     """Save uploaded files and regenerate the file list."""
-    #     directory = 'checkFile'
-    #     name = ''
-    #     if uploaded_filenames is not None and uploaded_file_contents is not None:
-    #         for name, data in zip(uploaded_filenames, uploaded_file_contents):
-    #             print(os.path.join(directory, name))
-    #             # save_file(name, data, directory=directory)
-    #     try:
-    #         print('Hola')
-    #         # pathFile = os.path.join(MAIN_DIRECTORY, UPLOAD_DIRECTORY, 'checkFile',
-    #         #                         name)
-    #         # pathFile = 'checkFile\\2021_03_31_10_19_23_PredictionError_CH_2.bin'
-    #         # pathFile = os.path.join(directory, name)
-    #         # stats = getStatFile(pathFile)
-    #     except Exception as e:
-    #         stats = [0, 0, 0]
-    #
-    #     return html.Div([
-    #         html.Table([
-    #             html.Tr([html.Th('Hz file'),
-    #                      html.Th('nPoints'),
-    #                      html.Th('Percentage')]),
-    #             html.Tr([html.Td(1000),
-    #                      html.Td(6000),
-    #                      html.Td(95)])],
-    #             style={'width': '70%', 'margin-left': '15%', 'margin-right': '15%'},
-    #         )
-    #     ])
-    #
-    #     # files = uploaded_files(directory=directory)
-    #     # if len(files) == 0:
-    #     #     return [html.Li("No files yet!")]
-    #     # else:
-    #     #     return [html.Li(file_download_link(filename)) for filename in files]
+def add_callback_sign_in(app):
     @app.callback(
-        Output('container-button-basic', 'children'),
-        Input('submit-val', 'n_clicks'),
-        State('input-on-submit', 'value')
+        Output(component_id='titulo-sign-in', component_property='children'),
+        [Input(component_id='submit-val', component_property='n_clicks'), ],
+        [State(component_id='input-email-sign-in', component_property='value'),
+         State(component_id='input-password-sign-in', component_property='value'),
+         ],
     )
-    def update_output(n_clicks, value):
-        return 'The input value was "{}" and the button has been clicked {} times'.format(
-            value,
+    def update_output(n_clicks, email, password):
+        print('Ha entrado en el callback de la funcion de sign in')
+        res = 'The input value was "{}" and the button has been clicked {} times'.format(
+            email,
             n_clicks
         )
+        if check_user(email, password):
+            try:
+                password_hash = user_get_password_hash(email)
+                id_user = user_get_id(email)
+                new_user = User(id_user=id_user,
+                                email=email,
+                                password_hash=password_hash)
+                SysConfig.CURRENT_USERS[id_user] = new_user
+                print('ff = 1')
+                login_user(new_user)
+            except Exception as e:
+                print('FALLO {}'.format(e))
+            res = 'Ha entrado '
+        return res
+
+
+# def is_user(email):
+#
+#     try:
+#         df = pd.read_csv('Users.txt', sep='\t', index_col=0)
+#     except Exception:
+#         df = pd.DataFrame([], columns=['Username', 'Email', 'Password'])
+#
+#     if email in df['Email'].unique():
+#         return True
+#     else:
+#         return False
+#
+#
+# def check_user(email, password):
+#
+#     if is_user(email):
+#         try:
+#             df = pd.read_csv('Users.txt', sep='\t')
+#         except Exception:
+#             df = pd.DataFrame([], columns=['Username', 'Email', 'Password'])
+#
+#         password_hash = df['Password'].where(df['Email'] == email)[0]
+#
+#         print(check_password_hash(password_hash, password))
+#
+#         return True
+#     else:
+#         return False
+#
+#
+# def user_get_password_hash(email):
+#     try:
+#         df = pd.read_csv('Users.txt', sep='\t')
+#         password_hash = df['Password'].where(df['Email'] == email)[0]
+#     except Exception:
+#         password_hash = None
+#     return password_hash
+#
+#
+# def user_get_id(email):
+#     try:
+#         df = pd.read_csv('Users.txt', sep='\t')
+#         id = df['id'].where(df['Email'] == email)[0]
+#     except Exception:
+#         id = None
+#     return id
+#
