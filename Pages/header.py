@@ -60,7 +60,12 @@ def get_header(app):
 
 
 def get_menu():
-    menu = html.Div(
+    # styleAdmin = {'visibility': 'hidden'} # if current_user.is_authenticated else {'visibility': 'visible'}
+    # if current_user.is_authenticated:
+    #     styleAdmin = {'visibility': 'visible'}
+    #     print('Esta registrado get menu')
+
+    menu_1 = html.Div(
         [
             dcc.Link(
                 "Sign in",
@@ -77,14 +82,28 @@ def get_menu():
                 href="/recover_account_page",
                 className="tab",
             ),
+        ],
+        className="row all-tabs",
+    )
+
+    menu_2 = html.Div(
+        [
             dcc.Link(
-                "New password",
-                href="/new_password_page",
+                "Pestaña de registrado",
+                href="/registrado_page",
+                className="tab first",
+            ),
+            dcc.Link(
+                "Administrar alarmas",
+                href="/admin_alarms_page",
                 className="tab",
             ),
         ],
         className="row all-tabs",
     )
+
+    menu = menu_2 if current_user.is_authenticated else menu_1
+
     return menu
 
 

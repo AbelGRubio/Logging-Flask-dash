@@ -3,7 +3,7 @@ import dash_core_components as dcc
 from dash.dependencies import Input, Output, State
 from Pages.header import Header
 import Configuration.ReaderConfSystem as SysConfig
-from Configuration.admin_users import is_new_user
+from Configuration.admin_users import is_new_user, check_password_strength
 from email_validator import validate_email, EmailNotValidError
 
 
@@ -60,11 +60,16 @@ def add_callback_sign_up(app):
         try:
             valid = validate_email(email)
             email = valid.email
+            respuesta = check_password_strength(password)
 
-            if is_new_user(username=username, email=email, password=password):
-                res = 'User register complete!'
+            if respuesta['password_ok']:
+                if is_new_user(username=username, email=email, password=password):
+                    res = 'User register complete! Wait for the email'
+                else:
+                    res = 'The username or email already exists!'
             else:
-                res = 'The user already exists'
+                res = 'The password must have upper case, lower case, \n ' \
+                      'digits, minimun of 8 lenth and at least one symbol'
 
         except EmailNotValidError as e:
             res = 'Email not valid'

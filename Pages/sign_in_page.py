@@ -62,7 +62,7 @@ def add_callback_sign_in(app):
                 new_user = User(id_user=id_user,
                                 email=email,
                                 password_hash=password_hash)
-                SysConfig.CURRENT_USERS[id_user] = new_user
+                SysConfig.CURRENT_USERS[int(id_user)] = new_user
                 # print('ff = 1')
                 login_user(new_user)
                 res = 'Ha entrado el usuario'

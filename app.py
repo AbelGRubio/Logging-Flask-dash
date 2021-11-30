@@ -5,7 +5,7 @@ from dash.dependencies import Input, Output, State
 import Configuration.ReaderConfSystem as SysConfig
 from Configuration import LOGGER
 from flask import Flask, request, redirect
-from flask_login import current_user
+from flask_login import current_user, logout_user
 import os
 
 
@@ -39,30 +39,31 @@ if __name__ == '__main__':
     @app.callback(Output("page-content", "children"), [Input("url", "pathname")])
     def display_page(pathname):
         try:
-            if current_user.is_authenticated:
-                if pathname == '/sign_up_page':
-                    import Pages.sign_up_page as sign_up_page
-                    return sign_up_page.create_layout(SysConfig.APP)
-                elif pathname == '/sign_in_page':
-                    import Pages.sign_in_page as sign_in_page
-                    return sign_in_page.create_layout(SysConfig.APP)
-                elif pathname == '/recover_account_page':
-                    import Pages.recover_account_page as recover_account_page
-                    return recover_account_page.create_layout(SysConfig.APP)
-                elif pathname == '/admin_alarms_page':
+            if pathname == '/recover_account_page':
+                import Pages.recover_account_page as recover_account_page
+                return recover_account_page.create_layout(SysConfig.APP)
+            elif pathname == '/sign_up_page':
+                import Pages.sign_up_page as sign_up_page
+                return sign_up_page.create_layout(SysConfig.APP)
+            elif pathname == '/sign_in_page':
+                import Pages.sign_in_page as sign_in_page
+                return sign_in_page.create_layout(SysConfig.APP)
+            elif pathname == '/admin_alarms_page' and current_user.is_authenticated:
+                import Pages.admin_alarms_page as admin_alarms_page
+                return admin_alarms_page.create_layout(SysConfig.APP)
+            elif pathname == '/registrado_page' and current_user.is_authenticated:
+                import Pages.registrado_page as registrado_page
+                return registrado_page.create_layout(SysConfig.APP)
+            else:
+                if current_user.is_authenticated:
                     import Pages.admin_alarms_page as admin_alarms_page
                     return admin_alarms_page.create_layout(SysConfig.APP)
-                elif pathname == '/new_password_page':
-                    import Pages.new_password_page as new_password_page
-                    return new_password_page.create_layout(SysConfig.APP)
                 else:
                     import Pages.sign_in_page as sign_in_page
                     return sign_in_page.create_layout(SysConfig.APP)
-            else:
-                import Pages.sign_in_page as sign_in_page
-                return sign_in_page.create_layout(SysConfig.APP)
         except Exception as e:
-            LOGGER.error('Error found {}'.format(e))
+            LOGGER.error('Error found {} -- {} -- {}'.format(e, SysConfig.APP,
+                                                           current_user.is_authenticated ))
             return 'Page not found 404'
 
 

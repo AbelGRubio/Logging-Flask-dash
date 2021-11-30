@@ -43,5 +43,7 @@ except Exception as e:
 
 @LOGIN_MANAGER.user_loader
 def load_user(user_id):
-    return CURRENT_USERS[int(user_id)]
+    user_id = int(float(user_id))
+    # print('the user id is {}'.format(user_id))
+    return CURRENT_USERS[user_id]
 
