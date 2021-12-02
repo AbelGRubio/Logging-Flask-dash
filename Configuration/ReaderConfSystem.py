@@ -1,8 +1,9 @@
 import configparser
 import sys
-
+import os
 from Configuration import LOGGER
 from flask_login import LoginManager, UserMixin
+from itsdangerous import URLSafeTimedSerializer
 
 
 ReaderConfig = configparser.ConfigParser()
@@ -39,6 +40,11 @@ try:
     LOGIN_MANAGER = LoginManager()
 
     CURRENT_USERS = {}
+
+    SECRET = os.urandom(12)
+
+    GEN_TOKENS = URLSafeTimedSerializer(SECRET)
+    TOKEN = None
 
 except Exception as e:
     LOGGER.debug('Could not find one of the config files! Mssg: {}'.format(e))

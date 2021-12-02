@@ -17,7 +17,7 @@ if __name__ == '__main__':
     SysConfig.SERVER = Flask(__name__)
 
     SysConfig.SERVER.config.update(
-        SECRET_KEY=os.urandom(12),
+        SECRET_KEY=SysConfig.SECRET,
     )
 
     SysConfig.APP = dash.Dash(
@@ -41,6 +41,7 @@ if __name__ == '__main__':
     # Update page
     @SysConfig.APP.callback(Output("page-content", "children"), [Input("url", "pathname")])
     def display_page(pathname):
+        print(pathname)
         try:
             if pathname == '/recover_account_page':
                 import Pages.recover_account_page as recover_account_page
@@ -57,6 +58,18 @@ if __name__ == '__main__':
             elif pathname == '/waiting_register_page':
                 import Pages.waiting_register_page as waiting_register_page
                 return waiting_register_page.layout
+            elif pathname == '/waiting_register_page':
+                import Pages.waiting_register_page as waiting_register_page
+                return waiting_register_page.layout
+            elif '/confirmed_email_page_' in pathname:
+                pathname = pathname.replace('/confirmed_email_page_', '')
+                try:
+                    email = SysConfig.GEN_TOKENS.loads(pathname, salt='email-confirm', max_age=20)
+                    print(email)
+                    import Pages.confirmed_email_page as confirmed_email_page
+                    return confirmed_email_page.layout
+                except Exception:
+                    return 'Page not found 404'
             elif pathname == '/admin_alarms_page' and current_user.is_authenticated:
                 import Pages.admin_alarms_page as admin_alarms_page
                 return admin_alarms_page.layout
