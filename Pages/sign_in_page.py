@@ -1,10 +1,14 @@
-import dash_html_components as html
-import dash_core_components as dcc
+from dash import html, dcc
+# import dash_html_components as html
+# import dash_core_components as dcc
 from dash.dependencies import Input, Output, State
 from Pages.header import Header
 import Configuration.ReaderConfSystem as SysConfig
-from Configuration.admin_users import check_user, user_get_id, user_get_password_hash, User
-from flask_login import login_user, logout_user, current_user, UserMixin
+from Configuration.admin_users import check_user, user_get_id, user_get_password_hash, User, is_user_confirmed, user_get_name
+from flask_login import login_user, current_user
+from flask import redirect, url_for
+import threading
+import time
 
 
 def create_layout(app):
@@ -13,16 +17,19 @@ def create_layout(app):
          html.Div(
          [
             html.H1(["Sign in"], style={'color': 'blue'}),
-            html.Div(dcc.Input(id='input-email-sign-in', type='text', placeholder="Your email...")),
-            html.Div(dcc.Input(id='input-password-sign-in', type='text', placeholder="Your password...")),
-            html.Button('Sign in', id='submit-val', n_clicks=0),
+            html.Div(dcc.Input(id='input-email-sign-in', type='text', placeholder="Your email...",
+                          ), className='margin-10px'),
+            html.Div(dcc.Input(id='input-password-sign-in', type='password', placeholder="Your password...",
+                      ), className='margin-10px'),
+            html.Div(html.Button('Sign in', id='submit-val', n_clicks=0, className='margin-10px'
+                         )),
             html.H6(['New in {}? '.format(SysConfig.NAME_SERVER),
                      dcc.Link(
                          "Create an account",
                          href="/sign_up_page",
-                     ), ]),
-            html.H6([dcc.Link(children="Forgot the password?", href="/recover_account_page"), ]),
-            html.H6(id='titulo-sign-in', children='Fill the form and press sign in')
+                     ), ], className='margin-10px'),
+            html.H6([dcc.Link(children="Forgot the password?", href="/recover_account_page"), ], className='margin-10px'),
+            html.H6(id='titulo-sign-in', children='Fill the form and press sign in', className='margin-10px')
          ],
          className="row text-align-center",
          ),
@@ -54,67 +61,39 @@ def add_callback_sign_in(app):
         #     email,
         #     n_clicks
         # )
-        res = 'Fallo al registrarse'
+        res = 'Error at sign in'
+        if not is_user_confirmed(email):
+            return 'The user is not confirmed'
         if check_user(email, password):
             try:
                 password_hash = user_get_password_hash(email)
                 id_user = user_get_id(email)
+                name_user = user_get_name(id_user)
                 new_user = User(id_user=id_user,
                                 email=email,
-                                password_hash=password_hash)
+                                password_hash=password_hash,
+                                username='__')
                 SysConfig.CURRENT_USERS[int(id_user)] = new_user
-                # print('ff = 1')
                 login_user(new_user)
-                res = 'Ha entrado el usuario'
+                res = 'User registered with name {}'.format(name_user)
+                th = threading.Thread(target=redirect_to_admin_alarms, )
+                th.start()
+                # SysConfig.LOGIN_MANAGER.needs_refresh()
+                #
+                # SysConfig.LOGIN_MANAGER.needs_refresh_callback()
             except Exception as e:
                 print('FALLO {}'.format(e))
+        else:
+            res = 'The password is incorrect'
         return res
 
 
-# def is_user(email):
-#
-#     try:
-#         df = pd.read_csv('Users.txt', sep='\t', index_col=0)
-#     except Exception:
-#         df = pd.DataFrame([], columns=['Username', 'Email', 'Password'])
-#
-#     if email in df['Email'].unique():
-#         return True
-#     else:
-#         return False
-#
-#
-# def check_user(email, password):
-#
-#     if is_user(email):
-#         try:
-#             df = pd.read_csv('Users.txt', sep='\t')
-#         except Exception:
-#             df = pd.DataFrame([], columns=['Username', 'Email', 'Password'])
-#
-#         password_hash = df['Password'].where(df['Email'] == email)[0]
-#
-#         print(check_password_hash(password_hash, password))
-#
-#         return True
-#     else:
-#         return False
-#
-#
-# def user_get_password_hash(email):
-#     try:
-#         df = pd.read_csv('Users.txt', sep='\t')
-#         password_hash = df['Password'].where(df['Email'] == email)[0]
-#     except Exception:
-#         password_hash = None
-#     return password_hash
-#
-#
-# def user_get_id(email):
-#     try:
-#         df = pd.read_csv('Users.txt', sep='\t')
-#         id = df['id'].where(df['Email'] == email)[0]
-#     except Exception:
-#         id = None
-#     return id
-#
+def redirect_to_admin_alarms():
+    print('Iniciado el thread timesleep')
+    print('ha terminado el timesleep')
+    # html.Meta(httpEquiv='hidden-div-2', content="2")
+    time.sleep(SysConfig.TIME_SLEEP_AFTER_SIGN_IN_OUT_UP)
+    # dcc.Location(id="url", refresh=True)
+    redirect("/admin_alarms_page", code=302)
+    print('se ha aplicado el redirect ')
+

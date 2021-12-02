@@ -12,9 +12,8 @@ def create_layout(app):
         [Header(app),
          html.Div(
          [
-            html.H1(["New password "], style={'color': 'blue'}),
-            html.Div(dcc.Input(id='input-password', type='text', placeholder="Your new password...")),
-            html.Div(dcc.Input(id='input-confirm-password', type='text', placeholder="Confirm your password...")),
+            html.H1(["Recover account"], style={'color': 'blue'}),
+            html.Div(dcc.Input(id='input-password', type='text', placeholder="Your email...")),
             html.Button('Confirm', id='submit-val', n_clicks=0),
             # html.H6(id='container-button-basic',
             #         children='Enter a value and press submit')

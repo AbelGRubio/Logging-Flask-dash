@@ -17,13 +17,22 @@ except Exception as e:
 
 
 try:
+    SERVER = None  #Flask(__name__)
     APP = None
+    # APP = dash.Dash(
+    #     name=__name__,
+    #     external_stylesheets=[dbc.themes.BOOTSTRAP],
+    #     meta_tags=[{"name": "viewport", "content": "width=device-width"},],
+    #     server=SERVER)
+
     LOADED_TABLE = False
     NAME_SERVER = ReaderConfig['system']['name_server']
 
     USER_PASSWORDS = {'root': 'prueba'}
 
     USER_IS_LOGGED = True
+
+    TIME_SLEEP_AFTER_SIGN_IN_OUT_UP = 2
 
     CALLBACK_SIGN_IN = False
     CALLBACK_SIGN_UP = False

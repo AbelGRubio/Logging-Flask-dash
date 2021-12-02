@@ -1,42 +1,46 @@
 import dash
-import dash_html_components as html
-import dash_core_components as dcc
+from dash import html, dcc
+# import dash_html_components as html
+# import dash_core_components as dcc
 from dash.dependencies import Input, Output, State
 import Configuration.ReaderConfSystem as SysConfig
 from Configuration import LOGGER
 from flask import Flask, request, redirect
 from flask_login import current_user, logout_user
 import os
+import dash_bootstrap_components as dbc
 
 
 if __name__ == '__main__':
 
     # Setup the Flask server
-    server = Flask(__name__)
+    SysConfig.SERVER = Flask(__name__)
 
-    server.config.update(
+    SysConfig.SERVER.config.update(
         SECRET_KEY=os.urandom(12),
     )
 
-    app = dash.Dash(
+    SysConfig.APP = dash.Dash(
         name=__name__,
+        external_stylesheets=[dbc.themes.BOOTSTRAP],
         meta_tags=[{"name": "viewport", "content": "width=device-width"},],
-        server=server)
+        server=SysConfig.SERVER)
     # server = app.server
-    app.config['suppress_callback_exceptions'] = True
-    app.title = 'ALERION'
+    SysConfig.APP.config['suppress_callback_exceptions'] = True
+    SysConfig.APP.title = 'ALERION'
 
     # Describe the layout/ UI of the app
-    app.layout = html.Div(
-        [dcc.Location(id="url", refresh=False), html.Div(id="page-content")]
+    SysConfig.APP.layout = html.Div(
+        [html.Div(id="page-content"), dcc.Location(id="url", refresh=False)]
     )
 
-    SysConfig.APP = app
-    SysConfig.LOGIN_MANAGER.init_app(server)
+    SysConfig.LOGIN_MANAGER.init_app(SysConfig.SERVER)
     SysConfig.LOGIN_MANAGER.login_view = '/sign_in_page'
+    SysConfig.LOGIN_MANAGER.refresh_view = '/registrado_page'
+    # SysConfig.LOGIN_MANAGER.
 
     # Update page
-    @app.callback(Output("page-content", "children"), [Input("url", "pathname")])
+    @SysConfig.APP.callback(Output("page-content", "children"), [Input("url", "pathname")])
     def display_page(pathname):
         try:
             if pathname == '/recover_account_page':
@@ -63,8 +67,8 @@ if __name__ == '__main__':
                     return sign_in_page.create_layout(SysConfig.APP)
         except Exception as e:
             LOGGER.error('Error found {} -- {} -- {}'.format(e, SysConfig.APP,
-                                                           current_user.is_authenticated ))
+                                                             current_user.is_authenticated ))
             return 'Page not found 404'
 
 
-    app.run_server(debug=True, host='192.168.127.105')  # host=os.getenv("HOST", "10.8.0.32"))
+    SysConfig.APP.run_server(debug=False, host='192.168.127.105')  # host=os.getenv("HOST", "10.8.0.32"))

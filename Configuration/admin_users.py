@@ -10,14 +10,14 @@ def is_new_user(username: str, email, password):
     try:
         df = pd.read_csv('Users.txt', sep='\t')
     except Exception:
-        df = pd.DataFrame([], columns=['id', 'Username', 'Email', 'Password'])
+        return False
 
     try:
         if username not in df['Username'].unique() and email not in df['Email'].unique():
-            new_df = pd.DataFrame([], columns=['id', 'Username', 'Email', 'Password'])
+            new_df = pd.DataFrame([], columns=['id', 'Username', 'Confirm', 'Email', 'Password'])
             password = generate_password_hash(password)
             random_id = int(np.random.random() * (2 ** 20 - 1))
-            new_df = new_df.append(dict(zip(new_df.columns, [random_id, username.lower(), email, password])),
+            new_df = new_df.append(dict(zip(new_df.columns, [random_id, username.lower(), False, email, password])),
                                    ignore_index=True)
             df_to_save = new_df.append(df)
             df_to_save.to_csv('Users.txt', sep='\t', index=False)
@@ -34,12 +34,23 @@ def is_user(email):
     try:
         df = pd.read_csv('Users.txt', sep='\t', index_col=0)
     except Exception:
-        df = pd.DataFrame([], columns=['Username', 'Email', 'Password'])
+        return False
 
     if email in df['Email'].unique():
         return True
     else:
         return False
+
+
+def is_user_confirmed(email):
+    if email is None:
+        return False
+    try:
+        df = pd.read_csv('Users.txt', sep='\t', index_col=0)
+    except Exception:
+        return False
+
+    return list(df[df['Email'] == email]['Confirm'])[0]
 
 
 def check_user(email, password):
@@ -52,9 +63,9 @@ def check_user(email, password):
 
         password_hash = list(df[df['Email'] == email]['Password'])[0] # df['Password'].where(df['Email'] == email)[0]
 
-        print('Es correcta la constraseña? {}'.format(check_password_hash(password_hash, password)))
+        # print('Es correcta la constraseña? {}'.format(check_password_hash(password_hash, password)))
 
-        return True
+        return check_password_hash(password_hash, password)
     else:
         return False
 
@@ -79,11 +90,22 @@ def user_get_id(email):
     return id_user
 
 
+def user_get_name(id: int):
+    try:
+        df = pd.read_csv('Users.txt', sep='\t')
+        # id_user = int(float(df['id'].where(df['Email'] == email)[0]))
+        user_name = list(df[df['id'] == id]['Username'])[0]
+    except Exception:
+        user_name = 'Fallo get name'
+    return user_name
+
+
 class User(UserMixin):
-    def __init__(self, id_user, email: str, password_hash: str):
+    def __init__(self, id_user, email: str, password_hash: str, username: str):
         UserMixin.__init__(self)
         self.id = id_user
         self.email = email
+        self.username = username
         self.password_hash = password_hash
 
     def __repr__(self):

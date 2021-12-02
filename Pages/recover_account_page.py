@@ -1,7 +1,7 @@
-import dash_html_components as html
-import dash_core_components as dcc
+from dash import html, dcc
+# import dash_html_components as html
+# import dash_core_components as dcc
 from dash.dependencies import Input, Output, State
-import os
 from Pages.header import Header
 import Configuration.ReaderConfSystem as SysConfig
 
@@ -12,8 +12,10 @@ def create_layout(app):
          html.Div(
          [
             html.H1(["Recover account"], style={'color': 'blue'}),
-            html.Div(dcc.Input(id='input-password', type='text', placeholder="Your email...")),
-            html.Button('Confirm', id='submit-val', n_clicks=0),
+            html.Div(dcc.Input(id='input-password', type='text', placeholder="Your email...")
+                     , className='margin-10px'),
+            html.Div(html.Button('Confirm', id='submit-val', n_clicks=0)
+                     , className='margin-10px'),
             # html.H6(id='container-button-basic',
             #         children='Enter a value and press submit')
          ],

@@ -1,5 +1,6 @@
-import dash_html_components as html
-import dash_core_components as dcc
+from dash import html, dcc
+# import dash_html_components as html
+# import dash_core_components as dcc
 from dash.dependencies import Input, Output, State
 from Pages.header import Header
 import Configuration.ReaderConfSystem as SysConfig
@@ -13,12 +14,17 @@ def create_layout(app):
          html.Div(
              [
                  html.H1(["Sign up"], style={'color': 'blue'}),
-                 html.Div(dcc.Input(id='input-username', type='text', placeholder="Your username...")),
-                 html.Div(dcc.Input(id='input-email', type='text', placeholder="Your email...")),
-                 html.Div(dcc.Input(id='input-password', type='text', placeholder="Your password...")),
-                 html.Div(dcc.Input(id='input-confirm-password', type='text', placeholder="Confirm your password...")),
-                 html.Button(children='Register', id='register-button', n_clicks=0),
-                 html.H6(id='tituloh6', children='Fill the form and press Register')
+                 html.Div(dcc.Input(id='input-username', type='text', placeholder="Your username...")
+                          , className='margin-10px'),
+                 html.Div(dcc.Input(id='input-email', type='text', placeholder="Your email...")
+                          , className='margin-10px'),
+                 html.Div(dcc.Input(id='input-password', type='password', placeholder="Your password...")
+                          , className='margin-10px'),
+                 html.Div(dcc.Input(id='input-confirm-password', type='password', placeholder="Confirm your password...")
+                          , className='margin-10px'),
+                 html.Div(html.Button(children='Register', id='register-button', n_clicks=0)
+                          , className='margin-10px'),
+                 html.H6(id='tituloh6', children='Fill the form and press Register', className='margin-10px')
              ],
              className="row text-align-center margin-10px",
          ),
