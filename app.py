@@ -35,9 +35,8 @@ if __name__ == '__main__':
     )
 
     SysConfig.LOGIN_MANAGER.init_app(SysConfig.SERVER)
-    SysConfig.LOGIN_MANAGER.login_view = '/sign_in_page'
+    SysConfig.LOGIN_MANAGER.login_view = '/sign_up_page'
     SysConfig.LOGIN_MANAGER.refresh_view = '/registrado_page'
-    # SysConfig.LOGIN_MANAGER.
 
     # Update page
     @SysConfig.APP.callback(Output("page-content", "children"), [Input("url", "pathname")])
@@ -45,26 +44,35 @@ if __name__ == '__main__':
         try:
             if pathname == '/recover_account_page':
                 import Pages.recover_account_page as recover_account_page
-                return recover_account_page.create_layout(SysConfig.APP)
+                return recover_account_page.layout
             elif pathname == '/sign_up_page':
                 import Pages.sign_up_page as sign_up_page
-                return sign_up_page.create_layout(SysConfig.APP)
+                return sign_up_page.layout
             elif pathname == '/sign_in_page':
                 import Pages.sign_in_page as sign_in_page
-                return sign_in_page.create_layout(SysConfig.APP)
+                return sign_in_page.layout
+            elif pathname == '/waiting_password_page':
+                import Pages.waiting_password_page as waiting_password_page
+                return waiting_password_page.layout
+            elif pathname == '/waiting_register_page':
+                import Pages.waiting_register_page as waiting_register_page
+                return waiting_register_page.layout
             elif pathname == '/admin_alarms_page' and current_user.is_authenticated:
                 import Pages.admin_alarms_page as admin_alarms_page
-                return admin_alarms_page.create_layout(SysConfig.APP)
+                return admin_alarms_page.layout
             elif pathname == '/registrado_page' and current_user.is_authenticated:
                 import Pages.registrado_page as registrado_page
-                return registrado_page.create_layout(SysConfig.APP)
+                return registrado_page.layout
+            elif pathname == '/sucessful_page' and current_user.is_authenticated:
+                import Pages.sucessful_page as sucessful_page
+                return sucessful_page.layout
             else:
                 if current_user.is_authenticated:
-                    import Pages.admin_alarms_page as admin_alarms_page
-                    return admin_alarms_page.create_layout(SysConfig.APP)
+                    import Pages.sucessful_page as sucessful_page
+                    return sucessful_page.layout
                 else:
                     import Pages.sign_in_page as sign_in_page
-                    return sign_in_page.create_layout(SysConfig.APP)
+                    return sign_in_page.layout
         except Exception as e:
             LOGGER.error('Error found {} -- {} -- {}'.format(e, SysConfig.APP,
                                                              current_user.is_authenticated ))

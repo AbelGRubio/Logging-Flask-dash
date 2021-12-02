@@ -17,13 +17,8 @@ except Exception as e:
 
 
 try:
-    SERVER = None  #Flask(__name__)
+    SERVER = None
     APP = None
-    # APP = dash.Dash(
-    #     name=__name__,
-    #     external_stylesheets=[dbc.themes.BOOTSTRAP],
-    #     meta_tags=[{"name": "viewport", "content": "width=device-width"},],
-    #     server=SERVER)
 
     LOADED_TABLE = False
     NAME_SERVER = ReaderConfig['system']['name_server']

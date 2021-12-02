@@ -1,6 +1,4 @@
 from dash import html, dcc
-# import dash_html_components as html
-# import dash_core_components as dcc
 import Configuration.ReaderConfSystem as SysConfig
 from flask_login import current_user, logout_user
 from dash.dependencies import State, Input, Output
@@ -9,8 +7,7 @@ from Configuration.admin_users import user_get_name
 
 
 def Header(app):
-    # return html.Div([get_header(app), html.Br([]), get_menu()])
-    return get_header(app)
+    return get_header(SysConfig.APP)
 
 
 def get_header(app):
@@ -26,15 +23,7 @@ def get_header(app):
 
     header = html.Div(
         [
-            # html.Div(
-            #     [
-            #         html.Img(
-            #             src=app.get_asset_url("imgs\\APL.png"),
-            #             className="logo",
-            #         ),
-            #     ],
-            #     className="row",
-            # ),
+            dcc.Location(id='url_header', refresh=True),
             html.H2(SysConfig.NAME_SERVER, className='title'),
             dbc.Row(
                 children=[
@@ -46,20 +35,9 @@ def get_header(app):
                             ), className='text-align-right')
                 ]
             ),
-            # html.Div([
-            #     html.H2('', className='col-sm-3'),
-            #     html.H2(SysConfig.NAME_SERVER, style={'background': 'red'}, className='col-sm-3'),
-            #     html.Button("Log out", id='logout-button', n_clicks=0,
-            #                          style={'background': 'blue'},
-            #                          className='col-sm-3'
-            #                          )],
-            #     className="row",
-            #     style={'background': 'green'},
-            # ),
-            # html.Br([]),
             get_menu(),
             html.Div(id="hidden-div", style={'display': 'none'}),
-            html.A(html.Button('Refresh page'), href='/', id="hidden-div-2", style={'display': 'none'}, )
+            # html.A(html.Button('Refresh page'), href='/', id="hidden-div-2", )
         ],
         className="margin-10px",
     )
@@ -78,11 +56,6 @@ def get_header(app):
 
 
 def get_menu():
-    # styleAdmin = {'visibility': 'hidden'} # if current_user.is_authenticated else {'visibility': 'visible'}
-    # if current_user.is_authenticated:
-    #     styleAdmin = {'visibility': 'visible'}
-    #     print('Esta registrado get menu')
-
     menu_empty = html.Div([], className="row all-tabs")
 
     menu_1 = dbc.Row(
@@ -110,19 +83,24 @@ def get_menu():
 
     menu_2 = dbc.Row(
         [
-            html.Div([], className='col-sm-4'),
+            html.Div([], className='col-sm-3'),
             html.Div([
+                dcc.Link(
+                    "Resumen_alarmas",
+                    href="/sucessful_page",
+                    className="tab first",
+                ),
             dcc.Link(
                 "Pestaña de registrado",
                 href="/registrado_page",
-                className="tab first",
+                className="tab ",
             ),
             dcc.Link(
                 "Administrar alarmas",
                 href="/admin_alarms_page",
                 className="tab",
-            ),], className='col-sm-4'),
-            html.Div([], className='col-sm-4'),
+            ),], className='col-sm-6'),
+            html.Div([], className='col-sm-3'),
 
         ],
         className="all-tabs",
@@ -135,7 +113,7 @@ def get_menu():
 
 def add_callback_header(app):
     @app.callback(
-        Output(component_id='hidden-div', component_property='children'),
+        Output(component_id='url_header', component_property='pathname'),
         [Input(component_id='logout-button', component_property='n_clicks')]
     )
     def log_out_header(n_clicks):
@@ -145,8 +123,7 @@ def add_callback_header(app):
                 del SysConfig.CURRENT_USERS[current_user.id]
             except Exception:
                 pass
+            print('Va a salir el usuario {}'.format(current_user.id))
             logout_user()
-            print('Ha salido el usuario {}'.format(current_user.id))
-        return 1
-
+            return '/sign_in_page'
 
