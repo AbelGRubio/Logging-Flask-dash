@@ -9,6 +9,7 @@ from flask import Flask, request, redirect
 from flask_login import current_user, logout_user
 import os
 import dash_bootstrap_components as dbc
+from Configuration.admin_users import is_confirmed_used
 
 
 if __name__ == '__main__':
@@ -64,12 +65,17 @@ if __name__ == '__main__':
             elif '/confirmed_email_page_' in pathname:
                 pathname = pathname.replace('/confirmed_email_page_', '')
                 try:
-                    email = SysConfig.GEN_TOKENS.loads(pathname, salt='email-confirm', max_age=20)
-                    print(email)
-                    import Pages.confirmed_email_page as confirmed_email_page
-                    return confirmed_email_page.layout
+                    email_date = SysConfig.GEN_TOKENS.loads(pathname, salt='email-confirm', max_age=20)
+                    email = email_date.split('_')[0]
+                    print('El usuario {} del token esta confirmado? {}'.format(email, is_confirmed_used(email)))
+                    if is_confirmed_used(email):
+                        import Pages.confirmed_email_page as confirmed_email_page
+                        return confirmed_email_page.layout
+                    else:
+                        raise Exception
                 except Exception:
-                    return 'Page not found 404'
+                    import Pages.expired_token_page as expired_token_page
+                    return expired_token_page.layout
             elif pathname == '/admin_alarms_page' and current_user.is_authenticated:
                 import Pages.admin_alarms_page as admin_alarms_page
                 return admin_alarms_page.layout

@@ -41,7 +41,7 @@ layout = html.Div(
      State(component_id='input-password', component_property='value'),
      State(component_id='input-confirm-password', component_property='value')],
 )
-def update_output(n_clicks, username, email, password, confirm_password):
+def update_sign_up_page(n_clicks, username, email, password, confirm_password):
     print('Ha entrado en el callback de la funcion')
     print([username, email, password, confirm_password])
     res = 'The input values are: {}, {}, {}, {}'.format(username, email, password, confirm_password)
@@ -52,15 +52,11 @@ def update_output(n_clicks, username, email, password, confirm_password):
     else:
         pass
     try:
-        valid = validate_email(email)
-        email = valid.email
         respuesta = check_password_strength(password)
 
         if respuesta['password_ok']:
-            if is_new_user(username=username, email=email, password=password):
+            if True:
                 res = 'User register complete! Wait for the email'
-            else:
-                res = 'The username or email already exists!'
         else:
             res = 'The password must have upper case, lower case, \n ' \
                   'digits, minimun of 8 lenth and at least one symbol'
@@ -72,11 +68,25 @@ def update_output(n_clicks, username, email, password, confirm_password):
 
 @SysConfig.APP.callback(Output('url_sign_up', 'pathname'),
               [Input('register-button', 'n_clicks'),],
+                [State(component_id='input-username', component_property='value'),
+                 State(component_id='input-email', component_property='value'),
+                 State(component_id='input-password', component_property='value'),
+                 State(component_id='input-confirm-password', component_property='value')]
                         )
-def submit_sign_in(input1):
-    print('El usuario esta registrado? {}'.format(current_user.is_authenticated))
+def submit_sign_up_page(input1, username, email, password, confirm_password):
+    # print('El usuario esta registrado? {}'.format(current_user.is_authenticated))
     if input1 > 0:
-        print('HAce algo ')
-        return '/waiting_register_page'
+        if None not in [username, email, password, confirm_password] and password == confirm_password:
+            valid = validate_email(email)
+            email = valid.email
+            respuesta = check_password_strength(password)
+
+            if respuesta['password_ok']:
+                print('registra? {}'.format(is_new_user(username=username, email=email, password=password)))
+
+            print('Hace algo sign up')
+            return '/waiting_register_page'
+        else:
+            print('Pasa rotundamente')
     else:
         print('Pasa')

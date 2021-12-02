@@ -7,7 +7,6 @@ import Configuration.ReaderConfSystem as SysConfig
 from Configuration.admin_users import check_user, user_get_id, user_get_password_hash, User, is_user_confirmed, user_get_name
 from flask_login import login_user, current_user
 from flask import redirect, url_for
-import threading
 import time
 
 

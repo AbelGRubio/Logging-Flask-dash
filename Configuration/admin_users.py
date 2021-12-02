@@ -10,14 +10,15 @@ def is_new_user(username: str, email, password):
     try:
         df = pd.read_csv('Users.txt', sep='\t')
     except Exception:
-        return False
+        df = pd.DataFrame([], columns=['id', 'Username', 'Confirm', 'Email', 'Password', 'UserKnow', 'level'])
 
     try:
         if username not in df['Username'].unique() and email not in df['Email'].unique():
-            new_df = pd.DataFrame([], columns=['id', 'Username', 'Confirm', 'Email', 'Password'])
+            new_df = pd.DataFrame([], columns=['id', 'Username', 'Confirm', 'Email', 'Password', 'UserKnow', 'level'])
             password = generate_password_hash(password)
             random_id = int(np.random.random() * (2 ** 20 - 1))
-            new_df = new_df.append(dict(zip(new_df.columns, [random_id, username.lower(), False, email, password])),
+            new_df = new_df.append(dict(zip(new_df.columns, [random_id, username.lower(), False, email, password,
+                                                             True, 0])),
                                    ignore_index=True)
             df_to_save = new_df.append(df)
             df_to_save.to_csv('Users.txt', sep='\t', index=False)
@@ -59,7 +60,7 @@ def check_user(email, password):
         try:
             df = pd.read_csv('Users.txt', sep='\t')
         except Exception:
-            df = pd.DataFrame([], columns=['id', 'Username', 'Email', 'Password'])
+            df = pd.DataFrame([], columns=['id', 'Username', 'Confirm', 'Email', 'Password', 'UserKnow', 'level'])
 
         password_hash = list(df[df['Email'] == email]['Password'])[0] # df['Password'].where(df['Email'] == email)[0]
 
@@ -150,3 +151,14 @@ def check_password_strength(password):
         'lowercase_error': lowercase_error,
         'symbol_error': symbol_error,
     }
+
+
+def is_confirmed_used(email):
+    try:
+        df = pd.read_csv('Users.txt', sep='\t')
+        # id_user = int(float(df['id'].where(df['Email'] == email)[0]))
+        id_user = list(df[df['Email'] == email]['Confirm'])[0]
+    except Exception:
+        id_user = False
+    # print('El usuario esta confirmado? {}'.format(id_user))
+    return id_user
