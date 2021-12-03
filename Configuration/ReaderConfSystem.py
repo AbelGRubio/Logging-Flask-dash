@@ -28,7 +28,7 @@ try:
 
     USER_IS_LOGGED = True
 
-    TIME_SLEEP_AFTER_SIGN_IN_OUT_UP = 2
+    TIME_SLEEP_AFTER_SIGN_IN_OUT_UP = int(ReaderConfig['system']['time_sleep_after_sign_in_out_up'])
 
     CALLBACK_SIGN_IN = False
     CALLBACK_SIGN_UP = False

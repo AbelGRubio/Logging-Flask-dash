@@ -72,6 +72,7 @@ if __name__ == '__main__':
                         import Pages.confirmed_email_page as confirmed_email_page
                         return confirmed_email_page.layout
                     else:
+                        print('HA entrado en la exception ')
                         raise Exception
                 except Exception:
                     import Pages.expired_token_page as expired_token_page

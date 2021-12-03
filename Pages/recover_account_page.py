@@ -33,8 +33,8 @@ def output_recover(n_clicks, value):
         import datetime
         el_correo = '{}_{}'.format(value, str(datetime.datetime.now()))
         SysConfig.TOKEN = SysConfig.GEN_TOKENS.dumps(el_correo, salt='email-confirm')
-        print(SysConfig.TOKEN)
-        # return '/confirmed_email_page_{}'.format(SysConfig.TOKEN)
-        return '/waiting_register_page'
+        # print(SysConfig.TOKEN)
+        return '/confirmed_email_page_{}'.format(SysConfig.TOKEN)
+        # return '/waiting_register_page'
     else:
         print('Pasa')
