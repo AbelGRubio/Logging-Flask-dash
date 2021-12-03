@@ -34,13 +34,13 @@ def output_recover(n_clicks, value):
         import datetime
         el_correo = '{}_{}'.format(value, str(datetime.datetime.now()))
         SysConfig.TOKEN = SysConfig.GEN_TOKENS.dumps(el_correo, salt='email-confirm')
-        url_token = 'http://192.168.127.105:8050/confirmed_email_page_{}'.format(SysConfig.TOKEN)
+        url_token = 'http://192.168.127.105:8050/new_password_page_{}'.format(SysConfig.TOKEN)
         mensage = create_email(is_confirmation=False,
                                url_token=url_token,
                                user_name=value.split('@')[0])
         send_mail(mensage)
         # print(SysConfig.TOKEN)
         # return '/confirmed_email_page_{}'.format(SysConfig.TOKEN)
-        return '/waiting_register_page'
+        return '/waiting_password_page'
     else:
         print('Pasa')

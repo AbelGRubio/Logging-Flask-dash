@@ -1,7 +1,6 @@
 from dash import html, dcc
 from Pages.header import Header
 import Configuration.ReaderConfSystem as SysConfig
-from dash.dependencies import Input, Output, State
 
 
 layout = html.Div(
@@ -9,25 +8,12 @@ layout = html.Div(
      html.Div(
      [
          dcc.Location(id='url_forbidden_page', refresh=True),
-         html.H1([""], style={'color': 'blue'}),
-         html.Div(html.Button('Go back', id='submit-forbidden', n_clicks=0)
-                  , className='margin-10px'),
-     ],
-     className="row text-align-center margin-10px",
+         html.H2("Forbidden URL", className='title'),
+         # html.Img(src='assets/imgs/forbidden-sign.jpg', style={'width': '40%', 'height': '40%'}),
+      ],
+     className="row margin-10px",
      ),
      ],
-    className="page",
+    className="page align-content-center",
 )
-
-
-@SysConfig.APP.callback(
-    Output(component_id='url_forbidden_page', component_property='pathname'),
-    [Input(component_id='submit-forbidden', component_property='n_clicks')]
-)
-def output_waiting(n_clicks):
-    if n_clicks > 0:
-        print('Hace algo en waiting page')
-        return '/sign_in_page'
-    else:
-        print('Pasa')
 

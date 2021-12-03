@@ -181,9 +181,9 @@ def is_confirmed_used(email):
         df = pd.read_csv('Users.txt', sep='\t')
         # id_user = int(float(df['id'].where(df['Email'] == email)[0]))
         id_user = list(df[df['Email'] == email]['Confirm'])[0]
-        df.at[list(df[df['Email'] == email].index)[0], 'Confirm'] = True
-        df.to_csv('Users.txt', sep='\t', index=False)
-        return True
+        # df.at[list(df[df['Email'] == email].index)[0], 'Confirm'] = True
+        # df.to_csv('Users.txt', sep='\t', index=False)
+        return id_user
     except Exception:
         id_user = False
     # print('El usuario esta confirmado? {}'.format(id_user))
