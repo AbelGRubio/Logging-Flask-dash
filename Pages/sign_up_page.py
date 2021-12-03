@@ -7,6 +7,7 @@ import Configuration.ReaderConfSystem as SysConfig
 from Configuration.admin_users import is_new_user, check_password_strength
 from email_validator import validate_email, EmailNotValidError
 from flask_login import current_user
+from Fun.send_email import create_email, send_mail
 
 
 layout = html.Div(
@@ -83,6 +84,12 @@ def submit_sign_up_page(input1, username, email, password, confirm_password):
 
             if respuesta['password_ok']:
                 print('registra? {}'.format(is_new_user(username=username, email=email, password=password)))
+                SysConfig.TOKEN = SysConfig.GEN_TOKENS.dumps(email, salt='email-confirm')
+                url_token = 'http://192.168.127.105:8050/confirmed_email_page_{}'.format(SysConfig.TOKEN)
+                mensage = create_email(is_confirmation=True,
+                                       url_token=url_token,
+                                       user_name=username)
+                send_mail(mensage)
 
             print('Hace algo sign up')
             return '/waiting_register_page'

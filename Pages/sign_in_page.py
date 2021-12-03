@@ -37,8 +37,10 @@ layout = html.Div(
     className="page",
 )
 
+
 @SysConfig.APP.callback(
-    Output(component_id='titulo-sign-in', component_property='children'),
+    [Output(component_id='titulo-sign-in', component_property='children'),
+     Output('url_sign_in', 'pathname')],
     [Input(component_id='submit-val', component_property='n_clicks'), ],
     [State(component_id='input-email-sign-in', component_property='value'),
      State(component_id='input-password-sign-in', component_property='value'),
@@ -65,16 +67,19 @@ def update_sign_in(n_clicks, email, password):
             SysConfig.CURRENT_USERS[int(id_user)] = new_user
             login_user(new_user)
             res = 'User registered with name {}'.format(name_user)
-            # th = threading.Thread(target=redirect_to_admin_alarms, )
-            # th.start()
-            # SysConfig.LOGIN_MANAGER.needs_refresh()
-            #
-            # SysConfig.LOGIN_MANAGER.needs_refresh_callback()
+
+            # print('El usuario esta registrado? {}'.format(current_user.is_authenticated))
+            if current_user.is_authenticated:
+                if n_clicks >= 0:
+                    # print('HAce algo ')
+                    return res, '/sucessful_page'
+                else:
+                    print('Pasa')
         except Exception as e:
-            print('FALLO {}'.format(e))
+                print('FALLO {}'.format(e))
     else:
         res = 'The password is incorrect'
-    return res
+    return res, '/sign_in_page'
 
 
 def redirect_to_admin_alarms():
@@ -87,15 +92,4 @@ def redirect_to_admin_alarms():
     print('se ha aplicado el redirect ')
 
 
-@SysConfig.APP.callback(Output('url_sign_in', 'pathname'),
-              [Input('submit-val', 'n_clicks'),],
-                        )
-def submit_sign_in(input1):
-    print('El usuario esta registrado? {}'.format(current_user.is_authenticated))
-    if current_user.is_authenticated:
-        if input1 >= 0:
-            print('HAce algo ')
-            return '/sucessful_page'
-        else:
-            print('Pasa')
 

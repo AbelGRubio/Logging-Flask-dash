@@ -9,7 +9,7 @@ from flask import Flask, request, redirect
 from flask_login import current_user, logout_user
 import os
 import dash_bootstrap_components as dbc
-from Configuration.admin_users import is_confirmed_used
+from Configuration.admin_users import is_confirmed_used, is_know_used, confirm_user
 
 
 if __name__ == '__main__':
@@ -44,10 +44,7 @@ if __name__ == '__main__':
     def display_page(pathname):
         print(pathname)
         try:
-            if pathname == '/recover_account_page':
-                import Pages.recover_account_page as recover_account_page
-                return recover_account_page.layout
-            elif pathname == '/sign_up_page':
+            if pathname == '/sign_up_page':
                 import Pages.sign_up_page as sign_up_page
                 return sign_up_page.layout
             elif pathname == '/sign_in_page':
@@ -62,13 +59,32 @@ if __name__ == '__main__':
             elif pathname == '/waiting_register_page':
                 import Pages.waiting_register_page as waiting_register_page
                 return waiting_register_page.layout
-            elif '/confirmed_email_page_' in pathname:
-                pathname = pathname.replace('/confirmed_email_page_', '')
+            elif '/recover_account_page_' in pathname:
+                pathname = pathname.replace('/recover_account_page_', '')
                 try:
                     email_date = SysConfig.GEN_TOKENS.loads(pathname, salt='email-confirm', max_age=20)
                     email = email_date.split('_')[0]
                     print('El usuario {} del token esta confirmado? {}'.format(email, is_confirmed_used(email)))
-                    if is_confirmed_used(email):
+                    confirm_user(email)
+                    if is_know_used(email):
+                        print('entraa para confirmar')
+                        import Pages.recover_account_page as recover_account_page
+                        return recover_account_page.layout
+                    else:
+                        print('HA entrado en la exception ')
+                        raise Exception
+                except Exception:
+                    import Pages.expired_token_page as expired_token_page
+                    return expired_token_page.layout
+            elif '/confirmed_email_page_' in pathname:
+                pathname = pathname.replace('/confirmed_email_page_', '')
+                try:
+                    email_date = SysConfig.GEN_TOKENS.loads(pathname, salt='email-confirm', max_age=50)
+                    email = email_date.split('_')[0]
+                    print('El usuario {} del token esta confirmado? {}'.format(email, is_confirmed_used(email)))
+                    confirm_user(email)
+                    if is_know_used(email):
+                        print('entraa para confirmar')
                         import Pages.confirmed_email_page as confirmed_email_page
                         return confirmed_email_page.layout
                     else:
@@ -95,7 +111,7 @@ if __name__ == '__main__':
                     return sign_in_page.layout
         except Exception as e:
             LOGGER.error('Error found {} -- {} -- {}'.format(e, SysConfig.APP,
-                                                             current_user.is_authenticated ))
+                                                             current_user.is_authenticated))
             return 'Page not found 404'
 
 

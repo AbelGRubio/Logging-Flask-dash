@@ -153,12 +153,40 @@ def check_password_strength(password):
     }
 
 
+def is_know_used(email):
+    try:
+        df = pd.read_csv('Users.txt', sep='\t')
+        # id_user = int(float(df['id'].where(df['Email'] == email)[0]))
+        id_user = list(df[df['Email'] == email]['UserKnow'])[0]
+    except Exception:
+        id_user = False
+    # print('El usuario esta confirmado? {}'.format(id_user))
+    return id_user
+
+
+def confirm_user(email):
+    try:
+        df = pd.read_csv('Users.txt', sep='\t')
+        # id_user = int(float(df['id'].where(df['Email'] == email)[0]))
+        df.at[list(df[df['Email'] == email].index)[0], 'Confirm'] = True
+        df.to_csv('Users.txt', sep='\t', index=False)
+        return True
+    except Exception:
+        id_user = False
+    return id_user
+
+
 def is_confirmed_used(email):
     try:
         df = pd.read_csv('Users.txt', sep='\t')
         # id_user = int(float(df['id'].where(df['Email'] == email)[0]))
         id_user = list(df[df['Email'] == email]['Confirm'])[0]
+        df.at[list(df[df['Email'] == email].index)[0], 'Confirm'] = True
+        df.to_csv('Users.txt', sep='\t', index=False)
+        return True
     except Exception:
         id_user = False
     # print('El usuario esta confirmado? {}'.format(id_user))
     return id_user
+
+

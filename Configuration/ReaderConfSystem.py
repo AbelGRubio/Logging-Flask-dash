@@ -30,11 +30,19 @@ try:
 
     TIME_SLEEP_AFTER_SIGN_IN_OUT_UP = int(ReaderConfig['system']['time_sleep_after_sign_in_out_up'])
 
-    CALLBACK_SIGN_IN = False
-    CALLBACK_SIGN_UP = False
-    CALLBACK_RECOVER_ACCOUNT = False
-    CALLBACK_NEW_PASSWORD = False
-    CALLBACK_SUCESSFUL = False
+    IMG_LOGO_PATH = ReaderConfig['system']['path_logo_mensaje']
+    with open(IMG_LOGO_PATH, 'rb') as f:
+        IMG_LOGO = f.read()
+
+    MAIL_SENDER = ReaderConfig['system']['email']
+    MAIL_PASSWORD = ReaderConfig['system']['password']
+    # lista de correos para enviar la confirmacion de la cuenta
+    MAIL_RECEIVER = ReaderConfig['system']['receiver'].split(',')
+    MAIL_MANAGER = ReaderConfig['system']['manager_email'].split(',')
+
+    MAIL_SUBJECT_EMAIL_CONFIRMATION = 'Email confirmation for {}'
+    MAIN_SUBJECT_EMAIL_RECUPERATION = 'Recuperation email for {}'
+
     CALLBACK_HEADER = False
 
     LOGIN_MANAGER = LoginManager()
