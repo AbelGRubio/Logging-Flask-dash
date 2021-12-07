@@ -4,7 +4,7 @@ import Configuration.ReaderConfSystem as SysConfig
 
 
 layout = html.Div(
-    [Header(SysConfig.APP),
+    [Header(),
      html.Div(
      [
          dcc.Location(id='url_forbidden_page', refresh=True),

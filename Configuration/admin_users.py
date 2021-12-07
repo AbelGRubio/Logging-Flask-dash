@@ -44,14 +44,16 @@ def is_user(email):
 
 
 def is_user_confirmed(email):
+    value = False
     if email is None:
-        return False
+        return value
     try:
         df = pd.read_csv('Users.txt', sep='\t', index_col=0)
+        value = list(df[df['Email'] == email]['Confirm'])[0]
     except Exception:
-        return False
+        value = False
 
-    return list(df[df['Email'] == email]['Confirm'])[0]
+    return value
 
 
 def check_user(email, password):

@@ -30,6 +30,9 @@ try:
 
     TIME_SLEEP_AFTER_SIGN_IN_OUT_UP = int(ReaderConfig['system']['time_sleep_after_sign_in_out_up'])
 
+    IP_HOST = ReaderConfig['system']['ip_host']
+    PORT_HOST = int(ReaderConfig['system']['port_host'])
+
     IMG_LOGO_PATH = ReaderConfig['system']['path_logo_mensaje']
     with open(IMG_LOGO_PATH, 'rb') as f:
         IMG_LOGO = f.read()

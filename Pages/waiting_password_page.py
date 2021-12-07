@@ -5,7 +5,7 @@ from dash.dependencies import Input, Output, State
 
 
 layout = html.Div(
-    [Header(SysConfig.APP),
+    [Header(),
      html.Div(
      [
          dcc.Location(id='url_waiting_password_page', refresh=True),

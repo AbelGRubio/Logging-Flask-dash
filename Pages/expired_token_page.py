@@ -5,7 +5,7 @@ from dash.dependencies import Input, Output, State
 
 
 layout = html.Div(
-    [Header(SysConfig.APP),
+    [Header(),
      html.Div(
      [
          dcc.Location(id='url_expired_token_page', refresh=True),
