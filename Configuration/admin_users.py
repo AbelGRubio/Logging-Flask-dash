@@ -18,7 +18,7 @@ def is_new_user(username: str, email, password):
             password = generate_password_hash(password)
             random_id = int(np.random.random() * (2 ** 20 - 1))
             new_df = new_df.append(dict(zip(new_df.columns, [random_id, username.lower(), False, email, password,
-                                                             True, 0])),
+                                                             True, 1])),
                                    ignore_index=True)
             df_to_save = new_df.append(df)
             df_to_save.to_csv('Users.txt', sep='\t', index=False)
@@ -190,5 +190,17 @@ def is_confirmed_used(email):
         id_user = False
     # print('El usuario esta confirmado? {}'.format(id_user))
     return id_user
+
+
+def change_new_password(email, new_password):
+    try:
+        df = pd.read_csv('Users.txt', sep='\t')
+        new_token_password = generate_password_hash(new_password)
+        df.loc[df['Email'] == email, 'Password'] = new_token_password
+        df.to_csv('Users.txt', sep='\t', index=False)
+        return True
+    except Exception:
+        return False
+
 
 

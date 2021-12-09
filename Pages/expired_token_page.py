@@ -3,19 +3,19 @@ from Pages.header import Header
 import Configuration.ReaderConfSystem as SysConfig
 from dash.dependencies import Input, Output, State
 
-
 layout = html.Div(
-    [Header(),
-     html.Div(
-     [
-         dcc.Location(id='url_expired_token_page', refresh=True),
-         html.H1(["Expired token"], style={'color': 'blue'}),
-         html.Div(html.Button('Go back', id='submit-expired', n_clicks=0)
-                  , className='margin-10px'),
-     ],
-     className="row text-align-center margin-10px",
-     ),
-     ],
+    [
+        # Header(),
+        html.Div(
+            [
+                dcc.Location(id='url_expired_token_page', refresh=True),
+                html.H1(["Expired token"], style={'color': 'blue'}),
+                html.Div(html.Button('Go back', id='submit-expired', n_clicks=0)
+                         , className='margin-10px'),
+            ],
+            className="row text-align-center margin-10px",
+        ),
+    ],
     className="page",
 )
 
@@ -30,4 +30,3 @@ def output_waiting(n_clicks):
         return '/sign_in_page'
     else:
         print('Pasa')
-

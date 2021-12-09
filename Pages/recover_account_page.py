@@ -3,7 +3,6 @@ from dash.dependencies import Input, Output, State
 from Pages.header import Header
 import Configuration.ReaderConfSystem as SysConfig
 from Fun.send_email import create_email, send_mail
-import dash_bootstrap_components as dbc
 
 
 layout = html.Div(
@@ -37,8 +36,8 @@ def output_recover(n_clicks, value):
         import datetime
         el_correo = '{}_{}'.format(value, str(datetime.datetime.now()))
         SysConfig.TOKEN = SysConfig.GEN_TOKENS.dumps(el_correo, salt='email-confirm')
-        url_token = 'https://{}:{}/new_password_page_{}'.format(SysConfig.IP_HOST, SysConfig.PORT_HOST,
-                                                                SysConfig.TOKEN)
+        url_token = 'http://{}:{}/new_password_page_{}'.format(SysConfig.IP_HOST, SysConfig.PORT_HOST,
+                                                               SysConfig.TOKEN)
         mensage = create_email(is_confirmation=False,
                                url_token=url_token,
                                user_name=value.split('@')[0])

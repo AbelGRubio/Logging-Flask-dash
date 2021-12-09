@@ -65,7 +65,7 @@ def update_sign_up_page(n_clicks, username, email, password, confirm_password):
                     # print('registra? {}'.format(is_new_user(username=username, email=email, password=password)))
                     if is_new_user(username=username, email=email, password=password):
                         SysConfig.TOKEN = SysConfig.GEN_TOKENS.dumps(email, salt='email-confirm')
-                        url_token = 'https://{}:{}/confirmed_email_page_{}'.format(SysConfig.IP_HOST,
+                        url_token = 'http://{}:{}/confirmed_email_page_{}'.format(SysConfig.IP_HOST,
                                                                                    SysConfig.PORT_HOST,
                                                                                    SysConfig.TOKEN)
                         mensage = create_email(is_confirmation=True,

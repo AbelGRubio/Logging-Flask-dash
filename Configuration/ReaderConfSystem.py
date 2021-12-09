@@ -46,6 +46,8 @@ try:
     MAIL_SUBJECT_EMAIL_CONFIRMATION = 'Email confirmation for {}'
     MAIN_SUBJECT_EMAIL_RECUPERATION = 'Recuperation email for {}'
 
+    MAX_AGE_TOKENS = 60
+
     CALLBACK_HEADER = False
 
     LOGIN_MANAGER = LoginManager()

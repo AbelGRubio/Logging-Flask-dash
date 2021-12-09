@@ -2,7 +2,6 @@
 import Configuration.ReaderConfSystem as SysConfig
 from Configuration.admin_users import is_confirmed_used, is_know_used, confirm_user
 from flask_login import login_required
-from flask import request
 from Pages.header import Header
 import copy
 
@@ -22,7 +21,7 @@ def load_admin_alarms_page():
 @SysConfig.SERVER.route('/confirmed_email_page_<token>')
 def load_confirmed_email_page(token):
     try:
-        email_date = SysConfig.GEN_TOKENS.loads(token, salt='email-confirm', max_age=20)
+        email_date = SysConfig.GEN_TOKENS.loads(token, salt='email-confirm', max_age=SysConfig.MAX_AGE_TOKENS)
         email = email_date.split('_')[0]
         confirm_user(email)
         if is_know_used(email):
@@ -54,11 +53,12 @@ def load_forbidden_page():
 @SysConfig.SERVER.route('/new_password_page_<token>')
 def load_new_password_page(token):
     try:
-        email_date = SysConfig.GEN_TOKENS.loads(token, salt='email-confirm', max_age=20)
+        email_date = SysConfig.GEN_TOKENS.loads(token, salt='email-confirm', max_age=SysConfig.MAX_AGE_TOKENS)
         email = email_date.split('_')[0]
         if is_know_used(email) and is_confirmed_used(email):
             import Pages.new_password_page as new_password_page 
             SysConfig.APP.layout = new_password_page.layout
+            new_password_page.USER_EMAIL = email
             return SysConfig.APP.index()
         else:
             raise Exception

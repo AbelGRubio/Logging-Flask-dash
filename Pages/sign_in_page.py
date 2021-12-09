@@ -1,12 +1,10 @@
 from dash import html, dcc
-# import dash_html_components as html
-# import dash_core_components as dcc
 from dash.dependencies import Input, Output, State
 from Pages.header import Header
 import Configuration.ReaderConfSystem as SysConfig
 from Configuration.admin_users import check_user, user_get_id, user_get_password_hash, User, is_user_confirmed, user_get_name
 from flask_login import login_user, current_user
-from flask import redirect, url_for
+from flask import redirect
 import time
 
 
@@ -78,16 +76,5 @@ def update_sign_in(n_clicks, email, password):
         res = 'The password is incorrect'
     # redirect(pathname, code=302)
     return res, pathname
-
-
-def redirect_to_admin_alarms():
-    print('Iniciado el thread timesleep')
-    print('ha terminado el timesleep')
-    # html.Meta(httpEquiv='hidden-div-2', content="2")
-    time.sleep(SysConfig.TIME_SLEEP_AFTER_SIGN_IN_OUT_UP)
-    # dcc.Location(id="url", refresh=True)
-    redirect("/admin_alarms_page", code=302)
-    print('se ha aplicado el redirect ')
-
 
 
