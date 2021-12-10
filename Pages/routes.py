@@ -4,20 +4,9 @@ from Configuration.admin_users import is_confirmed_used, is_know_used, confirm_u
 from flask_login import login_required
 from flask import request
 from flask_login import current_user
-from Fun.funtions import get_row_identification
-from dash import html
-from Pages.header import Header
 
 
 # @@@@@@@@@@@@@@@@@@@ ADDING ROUTES @@@@@@@@@@@@@
-
-# @SysConfig.SERVER.route('/admin_alarms_page', methods=['POST', 'GET'])
-# @login_required
-# def load_admin_alarms_page():
-#     import Pages.admin_alarms_page as admin_alarms_page
-#     print('Entra aqui con metodo request admin alarms {}'.format(request.method))
-#     SysConfig.APP.layout = html.Div(children=[Header(), get_row_identification(), admin_alarms_page.layout])
-#     return SysConfig.APP.index()
 
 
 @SysConfig.SERVER.route('/confirmed_email_page_<token>')
@@ -93,15 +82,6 @@ def load_recover_account_page():
     return SysConfig.APP.index() 
 
 
-# @SysConfig.SERVER.route('/registrado_page')
-# @login_required
-# def load_registrado_page():
-#     print('Entra aqui con metodo request registrado pag {}'.format(request.method))
-#     import Pages.mask_page as mask_page
-#     SysConfig.APP.layout = mask_page.layout
-#     return SysConfig.APP.index()
-
-
 @SysConfig.SERVER.route('/')
 @SysConfig.SERVER.route('/sign_in_page')
 def load_sign_in_page():
@@ -130,15 +110,6 @@ def load_sign_up_page():
     return SysConfig.APP.index() 
 
 
-# @SysConfig.SERVER.route('/welcome_page', methods=['POST', 'GET'])
-# @login_required
-# def load_successful_page():
-#     import Pages.welcome_page as welcome_page
-#     print('Entra aqui con metodo request welcome {}'.format(request.method))
-#     SysConfig.APP.layout = html.Div(children=[Header(), get_row_identification(), welcome_page.layout])
-#     return SysConfig.APP.index()
-
-
 @SysConfig.SERVER.route('/waiting_password_page')
 def load_waiting_password_page():
     import Pages.waiting_password_page as waiting_password_page
@@ -156,9 +127,6 @@ def load_waiting_register_page():
 # @@@@@@@@@@@@@@@@@@@@@@ ADDING ROUTES TO SERVER @@@@@@@@@@@@@@@
 
 
-# SysConfig.SERVER.add_url_rule('/admin_alarms_page', 'admin_alarms_page', view_func=load_admin_alarms_page)
-
-
 SysConfig.SERVER.add_url_rule('/confirmed_email_page_<token>', 'confirmed_email_page', view_func=load_confirmed_email_page)
 
 
@@ -174,17 +142,11 @@ SysConfig.SERVER.add_url_rule('/new_password_page_<token>', 'new_password_page',
 SysConfig.SERVER.add_url_rule('/recover_account_page', 'recover_account_page', view_func=load_recover_account_page)
 
 
-# SysConfig.SERVER.add_url_rule('/registrado_page', 'registrado_page', view_func=load_registrado_page)
-
-
 SysConfig.SERVER.add_url_rule('/sign_in_page', 'sign_in_page', view_func=load_sign_in_page)
 SysConfig.SERVER.add_url_rule('/', '', view_func=load_sign_in_page)
 
 
 SysConfig.SERVER.add_url_rule('/sign_up_page', 'sign_up_page', view_func=load_sign_up_page)
-
-
-# SysConfig.SERVER.add_url_rule('/successful_page', 'successful_page', view_func=load_successful_page)
 
 
 SysConfig.SERVER.add_url_rule('/waiting_password_page', 'waiting_password_page', view_func=load_waiting_password_page)

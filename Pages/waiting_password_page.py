@@ -1,11 +1,9 @@
 from dash import html, dcc
-from Pages.header import Header
 import Configuration.ReaderConfSystem as SysConfig
 from dash.dependencies import Input, Output, State
 
 layout = html.Div(
     [
-        # Header(),
         html.Div(
             [
                 dcc.Location(id='url_waiting_password_page', refresh=True),

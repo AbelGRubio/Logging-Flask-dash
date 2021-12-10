@@ -6,9 +6,7 @@ from Pages.header import Header
 import Configuration.ReaderConfSystem as SysConfig
 from Configuration.admin_users import is_new_user, check_password_strength
 from email_validator import validate_email, EmailNotValidError
-from flask_login import current_user
 from Fun.send_email import create_email, send_mail
-
 
 layout = html.Div(
     [Header(),
@@ -36,6 +34,7 @@ layout = html.Div(
     className="page",
 )
 
+
 @SysConfig.APP.callback(
     [Output(component_id='tituloh6', component_property='children'),
      Output(component_id='url_sign_up', component_property='pathname')],
@@ -48,7 +47,6 @@ layout = html.Div(
 def update_sign_up_page(n_clicks, username, email, password, confirm_password):
     print('Ha entrado en el callback de la funcion')
     print([username, email, password, confirm_password])
-    res = 'The input values are: {}, {}, {}, {}'.format(username, email, password, confirm_password)
     from flask import request
     print('current request path {}'.format(request.path))
     pathname = None
@@ -69,8 +67,8 @@ def update_sign_up_page(n_clicks, username, email, password, confirm_password):
                         el_correo = '{}_{}'.format(email, str(datetime.datetime.now()))
                         SysConfig.TOKEN = SysConfig.GEN_TOKENS.dumps(el_correo, salt='email-confirm')
                         url_token = 'http://{}:{}/confirmed_is_know_user_page_{}'.format(SysConfig.IP_HOST,
-                                                                                   SysConfig.PORT_HOST,
-                                                                                   SysConfig.TOKEN)
+                                                                                         SysConfig.PORT_HOST,
+                                                                                         SysConfig.TOKEN)
                         mensage = create_email(is_know_user=True,
                                                url_token=url_token,
                                                user_name=username)
@@ -83,4 +81,3 @@ def update_sign_up_page(n_clicks, username, email, password, confirm_password):
             res = 'Email not valid'
 
     return res, pathname
-

@@ -1,12 +1,10 @@
 from dash import html, dcc
-from Pages.header import Header
 import Configuration.ReaderConfSystem as SysConfig
 from dash.dependencies import Input, Output, State
 
 
 layout = html.Div(
     [
-        # Header(),
         html.Div(
             [
                 dcc.Location(id='url_confirmed_email_page', refresh=True),

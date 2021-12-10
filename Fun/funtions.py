@@ -13,7 +13,6 @@ def get_style():
 
 def get_user_name():
     Username = ' '
-    print('Entra username')
     if str(current_user) != 'None':
         if current_user.is_authenticated:
             Username = current_user.username

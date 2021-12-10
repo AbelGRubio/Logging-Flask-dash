@@ -4,23 +4,23 @@ from Pages.header import Header
 import Configuration.ReaderConfSystem as SysConfig
 from Fun.send_email import create_email, send_mail
 
-
 layout = html.Div(
-    [Header(),
-     html.Div(
-         [
-             dcc.Location(id='url_recover_account', refresh=True),
-             html.H1(["Recover account"], style={'color': 'blue'}),
-             html.Div(dcc.Input(id='input-email-recover', type='text', placeholder="Your email...")
-                      , className='margin-10px'),
-             html.Div(html.Button('Confirm', id='submit-recover', n_clicks=0)
-                      , className='margin-10px'),
-             html.Div(html.A('Back', href='sign_in_page', n_clicks=0)
-                      , className='margin-10px'),
-         ],
-         className="row text-align-center margin-10px",
-     ),
-     ],
+    [
+        Header(),
+        html.Div(
+            [
+                dcc.Location(id='url_recover_account', refresh=True),
+                html.H1(["Recover account"], style={'color': 'blue'}),
+                html.Div(dcc.Input(id='input-email-recover', type='text', placeholder="Your email...")
+                         , className='margin-10px'),
+                html.Div(html.Button('Confirm', id='submit-recover', n_clicks=0)
+                         , className='margin-10px'),
+                html.Div(html.A('Back', href='sign_in_page', n_clicks=0)
+                         , className='margin-10px'),
+            ],
+            className="row text-align-center margin-10px",
+        ),
+    ],
     className="page",
 )
 

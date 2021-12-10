@@ -1,11 +1,10 @@
 from dash import html, dcc
-from dash.dependencies import Input, Output, State
+from dash.dependencies import Input, Output
 from Pages.header import Header
 import Configuration.ReaderConfSystem as SysConfig
 from flask_login import login_required
 import copy
-from Fun.funtions import get_row_identification, get_user_name
-
+from Fun.funtions import get_row_identification
 
 layout = html.Div(
     [

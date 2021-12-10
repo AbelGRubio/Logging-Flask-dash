@@ -1,5 +1,4 @@
 from dash import html, dcc
-from Pages.header import Header
 import Configuration.ReaderConfSystem as SysConfig
 from dash.dependencies import Input, Output, State
 from Configuration.admin_users import confirm_is_know_user
@@ -12,7 +11,6 @@ USER_NAME = ''
 
 layout = html.Div(
     [
-        # Header(),
         html.Div(
             [
                 dcc.Location(id='url_forbidden_page', refresh=True),

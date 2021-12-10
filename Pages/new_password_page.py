@@ -2,31 +2,27 @@ import time
 
 from dash import html, dcc
 from dash.dependencies import Input, Output, State
-import os
-from Pages.header import Header
 import Configuration.ReaderConfSystem as SysConfig
 from Configuration.admin_users import change_new_password, check_password_strength
 from email_validator import validate_email, EmailNotValidError
 
-
 layout = html.Div(
     [
-        # Header(),
         html.Div(
-        [
-            dcc.Location(id='url_new_password', refresh=True),
-            html.H1(["New password "], style={'color': 'blue'}),
-            html.Div(dcc.Input(id='input-new-password', type='password', placeholder="Your new password...")),
-            html.Div(dcc.Input(id='input-confirm-new-password', type='password', placeholder="Confirm your password...")),
-            html.Button('Confirm', id='submit-new-password', n_clicks=0),
-            html.H6(id='new_password_title', children=' ', className='margin-10px')
-        ],
+            [
+                dcc.Location(id='url_new_password', refresh=True),
+                html.H1(["New password "], style={'color': 'blue'}),
+                html.Div(dcc.Input(id='input-new-password', type='password', placeholder="Your new password...")),
+                html.Div(dcc.Input(id='input-confirm-new-password', type='password',
+                                   placeholder="Confirm your password...")),
+                html.Button('Confirm', id='submit-new-password', n_clicks=0),
+                html.H6(id='new_password_title', children=' ', className='margin-10px')
+            ],
             className="row text-align-center margin-10px",
         ),
     ],
     className="page",
 )
-
 
 USER_EMAIL = ''
 
