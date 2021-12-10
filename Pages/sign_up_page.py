@@ -45,10 +45,6 @@ layout = html.Div(
      State(component_id='input-confirm-password', component_property='value')],
 )
 def update_sign_up_page(n_clicks, username, email, password, confirm_password):
-    print('Ha entrado en el callback de la funcion')
-    print([username, email, password, confirm_password])
-    from flask import request
-    print('current request path {}'.format(request.path))
     pathname = None
     if None in [username, email, password, confirm_password]:
         return 'Fill the form and press Register', pathname
@@ -62,7 +58,6 @@ def update_sign_up_page(n_clicks, username, email, password, confirm_password):
             if respuesta['password_ok']:
                 if True:
                     res = 'User register complete! Wait for the email'
-                    # print('registra? {}'.format(is_new_user(username=username, email=email, password=password)))
                     if is_new_user(username=username, email=email, password=password):
                         el_correo = '{}_{}'.format(email, str(datetime.datetime.now()))
                         SysConfig.TOKEN = SysConfig.GEN_TOKENS.dumps(el_correo, salt='email-confirm')
