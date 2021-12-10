@@ -6,19 +6,30 @@ from email import encoders
 import Configuration.ReaderConfSystem as SysConfig
 import smtplib
 from Configuration import LOGGER
-from Fun.email_content import CONFIRMATION_CONTENT, RECUPERATION_CONTENT
+from Fun.email_content import CONFIRMATION_CONTENT, RECUPERATION_CONTENT, IS_KNOW_CONTENT
 
 
-def create_email(is_confirmation: bool = True, url_token: str = '', user_name: str = ''):
+def create_email(is_confirmation: bool = True,
+                 is_know_user: bool = False,
+                 url_token: str = '',
+                 user_name: str = '',
+                 email: str = ''):
     # Create message object instance
     msg = MIMEMultipart()
 
     # Setup the parameters of the message
     msg['From'] = SysConfig.MAIL_SENDER
-    msg['To'] = ', '.join(SysConfig.MAIL_RECEIVER)
-    subject = SysConfig.MAIL_SUBJECT_EMAIL_CONFIRMATION if is_confirmation else SysConfig.MAIN_SUBJECT_EMAIL_RECUPERATION
-    msg['Subject'] = subject.format(user_name)
-    message_body_html = CONFIRMATION_CONTENT if is_confirmation else RECUPERATION_CONTENT
+    if email == '':
+        msg['To'] = ', '.join(SysConfig.MAIL_MANAGER)
+    else:
+        msg['To'] = email
+    if is_know_user:
+        msg['Subject'] = SysConfig.MAIL_SUBJECT_EMAIL_IS_KNOW_USER.format(user_name)
+        message_body_html = IS_KNOW_CONTENT
+    else:
+        subject = SysConfig.MAIL_SUBJECT_EMAIL_CONFIRMATION if is_confirmation else SysConfig.MAIN_SUBJECT_EMAIL_RECUPERATION
+        msg['Subject'] = subject.format(user_name)
+        message_body_html = CONFIRMATION_CONTENT if is_confirmation else RECUPERATION_CONTENT
     message_body_html = message_body_html.format(url_token)
 
     try:
@@ -63,7 +74,7 @@ def send_mail(email_msg: MIMEMultipart):
         smtp.sendmail(email_msg['From'], email_msg['To'], email_msg.as_string())
         smtp.quit()
         LOGGER.debug("Mail sent ")
-        print('Se ha enviado el mensaje')
+        print('Se ha enviado el mensaje a {}'.format(email_msg['To']))
     except Exception as e:
         LOGGER.debug("Error found: {}".format(e))
         return False

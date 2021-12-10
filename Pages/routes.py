@@ -2,20 +2,22 @@
 import Configuration.ReaderConfSystem as SysConfig
 from Configuration.admin_users import is_confirmed_used, is_know_used, confirm_user
 from flask_login import login_required
+from flask import request
+from flask_login import current_user
+from Fun.funtions import get_row_identification
+from dash import html
 from Pages.header import Header
-import copy
 
 
 # @@@@@@@@@@@@@@@@@@@ ADDING ROUTES @@@@@@@@@@@@@
 
-@SysConfig.SERVER.route('/admin_alarms_page')
-@login_required
-def load_admin_alarms_page():
-    import Pages.admin_alarms_page as admin_alarms_page
-    layout_to_show = copy.copy(admin_alarms_page.layout)
-    layout_to_show.children.insert(0, Header())
-    SysConfig.APP.layout = layout_to_show
-    return SysConfig.APP.index() 
+# @SysConfig.SERVER.route('/admin_alarms_page', methods=['POST', 'GET'])
+# @login_required
+# def load_admin_alarms_page():
+#     import Pages.admin_alarms_page as admin_alarms_page
+#     print('Entra aqui con metodo request admin alarms {}'.format(request.method))
+#     SysConfig.APP.layout = html.Div(children=[Header(), get_row_identification(), admin_alarms_page.layout])
+#     return SysConfig.APP.index()
 
 
 @SysConfig.SERVER.route('/confirmed_email_page_<token>')
@@ -30,6 +32,21 @@ def load_confirmed_email_page(token):
             return SysConfig.APP.index()
         else:
             raise Exception
+    except Exception:
+        import Pages.expired_token_page as expired_token_page
+        SysConfig.APP.layout = expired_token_page.layout
+        return SysConfig.APP.index()
+
+
+@SysConfig.SERVER.route('/confirmed_is_know_user_page_<token>')
+def load_confirmed_is_know_user_page(token):
+    try:
+        email_date = SysConfig.GEN_TOKENS.loads(token, salt='email-confirm', max_age=86400)
+        email = email_date.split('_')[0]
+        import Pages.confirmed_is_know_user_page as confirmed_is_know_user_page
+        confirmed_is_know_user_page.USER_NAME = email
+        SysConfig.APP.layout = confirmed_is_know_user_page.layout
+        return SysConfig.APP.index()
     except Exception:
         import Pages.expired_token_page as expired_token_page
         SysConfig.APP.layout = expired_token_page.layout
@@ -53,7 +70,8 @@ def load_forbidden_page():
 @SysConfig.SERVER.route('/new_password_page_<token>')
 def load_new_password_page(token):
     try:
-        email_date = SysConfig.GEN_TOKENS.loads(token, salt='email-confirm', max_age=SysConfig.MAX_AGE_TOKENS)
+        email_date = SysConfig.GEN_TOKENS.loads(token, salt='email-confirm',
+                                                max_age=SysConfig.MAX_AGE_TOKENS)
         email = email_date.split('_')[0]
         if is_know_used(email) and is_confirmed_used(email):
             import Pages.new_password_page as new_password_page 
@@ -75,16 +93,16 @@ def load_recover_account_page():
     return SysConfig.APP.index() 
 
 
-@SysConfig.SERVER.route('/registrado_page')
-@login_required
-def load_registrado_page():
-    import Pages.registrado_page as registrado_page
-    layout_to_show = copy.copy(registrado_page.layout)
-    layout_to_show.children.insert(0, Header())
-    SysConfig.APP.layout = layout_to_show
-    return SysConfig.APP.index()
+# @SysConfig.SERVER.route('/registrado_page')
+# @login_required
+# def load_registrado_page():
+#     print('Entra aqui con metodo request registrado pag {}'.format(request.method))
+#     import Pages.mask_page as mask_page
+#     SysConfig.APP.layout = mask_page.layout
+#     return SysConfig.APP.index()
 
 
+@SysConfig.SERVER.route('/')
 @SysConfig.SERVER.route('/sign_in_page')
 def load_sign_in_page():
     import Pages.sign_in_page as sign_in_page
@@ -93,8 +111,13 @@ def load_sign_in_page():
 
 
 @SysConfig.SERVER.route('/beginning_page')
+@SysConfig.SERVER.route('/admin_alarms_page', methods=['POST', 'GET'])
+@SysConfig.SERVER.route('/registrado_page')
+@SysConfig.SERVER.route('/welcome_page', methods=['POST', 'GET'])
 @login_required
 def load_mask_page():
+    print('Entra aqui con metodo request {}'.format(request.method))
+    print('El usuario que ha entrado es {}'.format(current_user.username))
     import Pages.mask_page as mask_page
     SysConfig.APP.layout = mask_page.layout
     return SysConfig.APP.index()
@@ -107,14 +130,13 @@ def load_sign_up_page():
     return SysConfig.APP.index() 
 
 
-@SysConfig.SERVER.route('/welcome_page')
-@login_required
-def load_successful_page():
-    import Pages.welcome_page as welcome_page
-    layout_to_show = copy.copy(welcome_page.layout)
-    layout_to_show.children.insert(0, Header())
-    SysConfig.APP.layout = layout_to_show
-    return SysConfig.APP.index()
+# @SysConfig.SERVER.route('/welcome_page', methods=['POST', 'GET'])
+# @login_required
+# def load_successful_page():
+#     import Pages.welcome_page as welcome_page
+#     print('Entra aqui con metodo request welcome {}'.format(request.method))
+#     SysConfig.APP.layout = html.Div(children=[Header(), get_row_identification(), welcome_page.layout])
+#     return SysConfig.APP.index()
 
 
 @SysConfig.SERVER.route('/waiting_password_page')
@@ -134,7 +156,7 @@ def load_waiting_register_page():
 # @@@@@@@@@@@@@@@@@@@@@@ ADDING ROUTES TO SERVER @@@@@@@@@@@@@@@
 
 
-SysConfig.SERVER.add_url_rule('/admin_alarms_page', 'admin_alarms_page', view_func=load_admin_alarms_page)
+# SysConfig.SERVER.add_url_rule('/admin_alarms_page', 'admin_alarms_page', view_func=load_admin_alarms_page)
 
 
 SysConfig.SERVER.add_url_rule('/confirmed_email_page_<token>', 'confirmed_email_page', view_func=load_confirmed_email_page)
@@ -152,16 +174,17 @@ SysConfig.SERVER.add_url_rule('/new_password_page_<token>', 'new_password_page',
 SysConfig.SERVER.add_url_rule('/recover_account_page', 'recover_account_page', view_func=load_recover_account_page)
 
 
-SysConfig.SERVER.add_url_rule('/registrado_page', 'registrado_page', view_func=load_registrado_page)
+# SysConfig.SERVER.add_url_rule('/registrado_page', 'registrado_page', view_func=load_registrado_page)
 
 
 SysConfig.SERVER.add_url_rule('/sign_in_page', 'sign_in_page', view_func=load_sign_in_page)
+SysConfig.SERVER.add_url_rule('/', '', view_func=load_sign_in_page)
 
 
 SysConfig.SERVER.add_url_rule('/sign_up_page', 'sign_up_page', view_func=load_sign_up_page)
 
 
-SysConfig.SERVER.add_url_rule('/successful_page', 'successful_page', view_func=load_successful_page)
+# SysConfig.SERVER.add_url_rule('/successful_page', 'successful_page', view_func=load_successful_page)
 
 
 SysConfig.SERVER.add_url_rule('/waiting_password_page', 'waiting_password_page', view_func=load_waiting_password_page)

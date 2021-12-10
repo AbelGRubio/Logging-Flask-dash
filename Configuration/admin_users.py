@@ -18,7 +18,7 @@ def is_new_user(username: str, email, password):
             password = generate_password_hash(password)
             random_id = int(np.random.random() * (2 ** 20 - 1))
             new_df = new_df.append(dict(zip(new_df.columns, [random_id, username.lower(), False, email, password,
-                                                             True, 1])),
+                                                             False, 1])),
                                    ignore_index=True)
             df_to_save = new_df.append(df)
             df_to_save.to_csv('Users.txt', sep='\t', index=False)
@@ -153,6 +153,18 @@ def check_password_strength(password):
         'lowercase_error': lowercase_error,
         'symbol_error': symbol_error,
     }
+
+
+def confirm_is_know_user(email):
+    try:
+        df = pd.read_csv('Users.txt', sep='\t')
+        # id_user = int(float(df['id'].where(df['Email'] == email)[0]))
+        df.at[list(df[df['Email'] == email].index)[0], 'UserKnow'] = True
+        df.to_csv('Users.txt', sep='\t', index=False)
+        return True
+    except Exception:
+        id_user = False
+    return id_user
 
 
 def is_know_used(email):

@@ -2,11 +2,14 @@ from dash import html, dcc
 from dash.dependencies import Input, Output
 import os
 import Configuration.ReaderConfSystem as SysConfig
+from Pages.header import Header
+from Fun.funtions import get_row_identification
 
 
 layout = html.Div(
     [dcc.Location(id='url_admin_alarms', refresh=True),
      # Header(),
+     # get_row_identification(),
      html.Div(
          [
              html.Br([]),
@@ -22,11 +25,11 @@ layout = html.Div(
                  )
              ])
          ],
-         className="row",
-         style={'margin-left': '10px', 'margin-right': '10px'}
+         className="row  margin-10px",
+         # style={'margin-left': '10px', 'margin-right': '10px'}
      ),
      ],
-    # className="page",
+    className=" margin-10px",
 )
 
 

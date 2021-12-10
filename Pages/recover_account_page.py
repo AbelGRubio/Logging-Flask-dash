@@ -40,7 +40,8 @@ def output_recover(n_clicks, value):
                                                                SysConfig.TOKEN)
         mensage = create_email(is_confirmation=False,
                                url_token=url_token,
-                               user_name=value.split('@')[0])
+                               user_name=value.split('@')[0],
+                               email=value)
         send_mail(mensage)
         # print(SysConfig.TOKEN)
         # return '/confirmed_email_page_{}'.format(SysConfig.TOKEN)

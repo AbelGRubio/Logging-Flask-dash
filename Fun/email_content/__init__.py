@@ -9,3 +9,9 @@ open_html.close()
 open_html = open(os.path.join(folder_path, 'recuperation_email.html'), 'r')
 RECUPERATION_CONTENT = ''.join(open_html.readlines())
 open_html.close()
+
+
+open_html = open(os.path.join(folder_path, 'is_know_email.html'), 'r')
+IS_KNOW_CONTENT = ''.join(open_html.readlines())
+open_html.close()
+

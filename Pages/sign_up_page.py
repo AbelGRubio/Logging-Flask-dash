@@ -1,3 +1,5 @@
+import datetime
+
 from dash import html, dcc
 from dash.dependencies import Input, Output, State
 from Pages.header import Header
@@ -64,11 +66,12 @@ def update_sign_up_page(n_clicks, username, email, password, confirm_password):
                     res = 'User register complete! Wait for the email'
                     # print('registra? {}'.format(is_new_user(username=username, email=email, password=password)))
                     if is_new_user(username=username, email=email, password=password):
-                        SysConfig.TOKEN = SysConfig.GEN_TOKENS.dumps(email, salt='email-confirm')
-                        url_token = 'http://{}:{}/confirmed_email_page_{}'.format(SysConfig.IP_HOST,
+                        el_correo = '{}_{}'.format(email, str(datetime.datetime.now()))
+                        SysConfig.TOKEN = SysConfig.GEN_TOKENS.dumps(el_correo, salt='email-confirm')
+                        url_token = 'http://{}:{}/confirmed_is_know_user_page_{}'.format(SysConfig.IP_HOST,
                                                                                    SysConfig.PORT_HOST,
                                                                                    SysConfig.TOKEN)
-                        mensage = create_email(is_confirmation=True,
+                        mensage = create_email(is_know_user=True,
                                                url_token=url_token,
                                                user_name=username)
                         send_mail(mensage)

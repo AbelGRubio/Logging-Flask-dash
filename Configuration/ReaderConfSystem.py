@@ -40,10 +40,11 @@ try:
     MAIL_SENDER = ReaderConfig['system']['email']
     MAIL_PASSWORD = ReaderConfig['system']['password']
     # lista de correos para enviar la confirmacion de la cuenta
-    MAIL_RECEIVER = ReaderConfig['system']['receiver'].split(',')
+    # MAIL_RECEIVER = ReaderConfig['system']['receiver'].split(',')
     MAIL_MANAGER = ReaderConfig['system']['manager_email'].split(',')
 
     MAIL_SUBJECT_EMAIL_CONFIRMATION = 'Email confirmation for {}'
+    MAIL_SUBJECT_EMAIL_IS_KNOW_USER = 'Email is know user for {}'
     MAIN_SUBJECT_EMAIL_RECUPERATION = 'Recuperation email for {}'
 
     MAX_AGE_TOKENS = 60

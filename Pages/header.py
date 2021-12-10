@@ -3,39 +3,54 @@ import Configuration.ReaderConfSystem as SysConfig
 from flask_login import current_user, logout_user
 from dash.dependencies import State, Input, Output
 import dash_bootstrap_components as dbc
-from Configuration.admin_users import user_get_name
 
 
 def Header():
     return get_header(SysConfig.APP)
 
 
-def get_header(app):
+def get_style():
     styleAdmin = {'visibility': 'hidden'}  # if current_user.is_authenticated else {'visibility': 'visible'}
-    Username = '_____'
     if str(current_user) != 'None':
         if current_user.is_authenticated:
             styleAdmin = {'visibility': 'visible'}
-            print('Esta registrado')
-            try:
-                Username = user_get_name(int(current_user.get_id()))
-            except:
-                Username = '____'
+    return styleAdmin
+
+
+def get_user_name():
+    Username = ' '
+    if str(current_user) != 'None':
+        if current_user.is_authenticated:
+            Username = current_user.username
+    return Username
+
+
+def get_header(app):
+    # Username = '_____'
+    # if str(current_user) != 'None':
+    #     if current_user.is_authenticated:
+    #         styleAdmin = {'visibility': 'visible'}
+    #         print('Esta registrado')
+    #         try:
+    #             # Username = user_get_name(int(current_user.get_id()))
+    #             Username = current_user.username
+    #         except:
+    #             Username = '____'
 
     header = html.Div(
         [
             dcc.Location(id='url_header', refresh=True),
             html.H2(SysConfig.NAME_SERVER, className='title'),
-            dbc.Row(
-                children=[
-                    dbc.Col(html.H2(Username),
-                            style=styleAdmin,
-                            ),
-                    dbc.Col(html.Button("Log out", id='logout-button', n_clicks=0,
-                                        style=styleAdmin,
-                                        ), className='text-align-right')
-                ]
-            ),
+            # dbc.Row(
+            #     children=[
+            #         dbc.Col(html.H2(get_user_name()),
+            #                 style=get_style(),
+            #                 ),
+            #         dbc.Col(html.Button("Log out", id='logout-button', n_clicks=0,
+            #                             style=get_style(),
+            #                             ), className='text-align-right')
+            #     ]
+            # ),
             get_menu(),
             html.Div(id="hidden-div", style={'display': 'none'}),
             # html.A(html.Button('Refresh page'), href='/', id="hidden-div-2", )
