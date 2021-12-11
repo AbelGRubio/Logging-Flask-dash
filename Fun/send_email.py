@@ -36,7 +36,6 @@ def send_mail_confirmation(mail, username):
                                url_token=url_token,
                                user_name=username,
                                email=mail)
-        send_mail(mensage)
         return send_mail(mensage)
     except Exception as e:
         return False
