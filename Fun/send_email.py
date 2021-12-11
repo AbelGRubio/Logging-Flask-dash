@@ -7,6 +7,54 @@ import Configuration.ReaderConfSystem as SysConfig
 import smtplib
 from Configuration import LOGGER
 from Fun.email_content import CONFIRMATION_CONTENT, RECUPERATION_CONTENT, IS_KNOW_CONTENT
+import datetime
+
+
+def send_mail_recover(mail, username):
+    try:
+        el_correo = '{}_{}'.format(mail, str(datetime.datetime.now()))
+        SysConfig.TOKEN = SysConfig.GEN_TOKENS.dumps(el_correo, salt='email-confirm')
+        url_token = 'http://{}:{}/new_password_page_{}'.format(SysConfig.IP_HOST, SysConfig.PORT_HOST,
+                                                               SysConfig.TOKEN)
+        mensage = create_email(is_confirmation=False,
+                               url_token=url_token,
+                               user_name=username,
+                               email=mail)
+        return send_mail(mensage)
+    except Exception as e:
+        return False
+
+
+def send_mail_confirmation(mail, username):
+    try:
+        el_correo = '{}_{}'.format(mail, str(datetime.datetime.now()))
+        SysConfig.TOKEN = SysConfig.GEN_TOKENS.dumps(el_correo, salt='email-confirm')
+        url_token = 'http://{}:{}/confirmed_email_page_{}'.format(SysConfig.IP_HOST,
+                                                                  SysConfig.PORT_HOST,
+                                                                  SysConfig.TOKEN)
+        mensage = create_email(is_confirmation=True,
+                               url_token=url_token,
+                               user_name=username,
+                               email=mail)
+        send_mail(mensage)
+        return send_mail(mensage)
+    except Exception as e:
+        return False
+
+
+def send_mail_is_know_user(email, username):
+    try:
+        el_correo = '{}_{}'.format(email, str(datetime.datetime.now()))
+        SysConfig.TOKEN = SysConfig.GEN_TOKENS.dumps(el_correo, salt='email-confirm')
+        url_token = 'http://{}:{}/confirmed_is_know_user_page_{}'.format(SysConfig.IP_HOST,
+                                                                         SysConfig.PORT_HOST,
+                                                                         SysConfig.TOKEN)
+        mensage = create_email(is_know_user=True,
+                               url_token=url_token,
+                               user_name=email)
+        return send_mail(mensage)
+    except Exception as e:
+        return False
 
 
 def create_email(is_confirmation: bool = True,

@@ -34,6 +34,7 @@ def load_confirmed_is_know_user_page(token):
         email = email_date.split('_')[0]
         import Pages.confirmed_is_know_user_page as confirmed_is_know_user_page
         confirmed_is_know_user_page.USER_NAME = email
+        confirmed_is_know_user_page.USER_MAIL = email
         SysConfig.APP.layout = confirmed_is_know_user_page.layout
         return SysConfig.APP.index()
     except Exception:

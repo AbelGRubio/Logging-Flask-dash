@@ -3,7 +3,7 @@ from dash.dependencies import Input, Output, State
 from Pages.header import Header
 import Configuration.ReaderConfSystem as SysConfig
 from Configuration.admin_users import check_user, user_get_id, user_get_password_hash, User, is_user_confirmed, \
-    user_get_name
+    user_get_name, user_account_exist
 from flask_login import login_user, current_user
 
 layout = html.Div(
@@ -46,6 +46,8 @@ layout = html.Div(
 def update_sign_in(n_clicks, email, password):
     res = 'Error at sign in'
     pathname = None
+    # if not user_account_exist(email):
+    #     return 'There is not user with mail {} register'.format(email)
     if not is_user_confirmed(email):
         return 'The user is not confirmed', pathname
     if check_user(email, password):

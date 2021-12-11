@@ -27,7 +27,7 @@ layout = html.Div([
 
     html.Button('Add user', id='editing-rows-button', n_clicks=COUNTER_ADD),
     html.Button('Save ', id='save-admin-user-button', n_clicks=COUNTER_SAVE, style={'margin-left': '10px'}),
-    html.Button('Resend token', id='resend-token', n_clicks=COUNTER_SEND_TOKEN, style={'margin-left': '10px'}),
+    html.Button('Resend token', id='resend-token-button', n_clicks=COUNTER_SEND_TOKEN, style={'margin-left': '10px'}),
     html.H5('', id='status-admin-user'),
 ])
 
@@ -60,10 +60,14 @@ def reload_page():
     [Output('adding-rows-table', 'data'),
      Output('status-admin-user', 'children')],
     [Input('editing-rows-button', 'n_clicks'),
-     Input('save-admin-user-button', 'n_clicks')],
+     Input('save-admin-user-button', 'n_clicks'),
+     Input('resend-token-button', 'n_clicks'),
+     Input('adding-rows-table', 'active_cell')],
     [State('adding-rows-table', 'data'),
-     State('adding-rows-table', 'columns')])
-def add_row(n_clicks, n_clicks_save, rows, columns):
+     State('adding-rows-table', 'columns'),
+     ])
+def add_row(n_clicks, n_clicks_save, n_clicks_token,
+            selected_row_indices, rows, columns ):
     global COUNTER_ADD, COUNTER_SAVE, COUNTER_SEND_TOKEN
     status_message = ''
     if n_clicks != COUNTER_ADD:
@@ -89,6 +93,11 @@ def add_row(n_clicks, n_clicks_save, rows, columns):
         df_old.to_csv(path_or_buf=USERS_NAME_TXT, sep='\t', index=True)
         status_message = 'User database updated'
         COUNTER_SEND_TOKEN += 1
+
+    if n_clicks_token != COUNTER_SEND_TOKEN:
+        status_message = 'New token sended {}'.format(selected_row_indices)
+        print('rows selected {}'.format(selected_row_indices))
+
     return rows, status_message
 
 

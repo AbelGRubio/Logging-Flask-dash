@@ -6,7 +6,7 @@ from Pages.header import Header
 import Configuration.ReaderConfSystem as SysConfig
 from Configuration.admin_users import is_new_user, check_password_strength
 from email_validator import validate_email, EmailNotValidError
-from Fun.send_email import create_email, send_mail
+from Fun.send_email import send_mail_is_know_user
 
 layout = html.Div(
     [Header(),
@@ -59,16 +59,19 @@ def update_sign_up_page(n_clicks, username, email, password, confirm_password):
                 if True:
                     res = 'User register complete! Wait for the email'
                     if is_new_user(username=username, email=email, password=password):
-                        el_correo = '{}_{}'.format(email, str(datetime.datetime.now()))
-                        SysConfig.TOKEN = SysConfig.GEN_TOKENS.dumps(el_correo, salt='email-confirm')
-                        url_token = 'http://{}:{}/confirmed_is_know_user_page_{}'.format(SysConfig.IP_HOST,
-                                                                                         SysConfig.PORT_HOST,
-                                                                                         SysConfig.TOKEN)
-                        mensage = create_email(is_know_user=True,
-                                               url_token=url_token,
-                                               user_name=username)
-                        send_mail(mensage)
-                        pathname = '/waiting_register_page'
+                        send_mail_is_know_user(email, username)
+                    else:
+                        res = 'Already exist the user!'
+                        # el_correo = '{}_{}'.format(email, str(datetime.datetime.now()))
+                        # SysConfig.TOKEN = SysConfig.GEN_TOKENS.dumps(el_correo, salt='email-confirm')
+                        # url_token = 'http://{}:{}/confirmed_is_know_user_page_{}'.format(SysConfig.IP_HOST,
+                        #                                                                  SysConfig.PORT_HOST,
+                        #                                                                  SysConfig.TOKEN)
+                        # mensage = create_email(is_know_user=True,
+                        #                        url_token=url_token,
+                        #                        user_name=username)
+                        # send_mail(mensage)
+                    pathname = '/waiting_register_page'
             else:
                 res = 'The password must have upper case, lower case, \n ' \
                       'digits, minimun of 8 lenth and at least one symbol'

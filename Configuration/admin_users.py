@@ -17,7 +17,7 @@ def is_new_user(username: str, email, password):
         df = pd.DataFrame([], columns=COLUMNS)
 
     try:
-        if username not in df['Username'].unique() and email not in df['Email'].unique():
+        if email not in df['Email'].unique(): # username not in df['Username'].unique() and
             new_df = pd.DataFrame([], columns=COLUMNS)
             password = generate_password_hash(password)
             random_id = int(np.random.random() * (2 ** 20 - 1))
@@ -69,6 +69,19 @@ def is_user(email):
         return True
     else:
         return False
+
+
+def user_account_exist(email):
+    value = False
+    if email is None:
+        return value
+    try:
+        df = pd.read_csv(USERS_NAME_TXT, sep='\t', index_col=0)
+        value = len(list(df[df['Email'] == email])) > 0
+    except Exception:
+        value = False
+
+    return value
 
 
 def is_user_confirmed(email):
