@@ -94,6 +94,7 @@ def load_sign_in_page():
 @SysConfig.SERVER.route('/admin_alarms_page', methods=['POST', 'GET'])
 @SysConfig.SERVER.route('/registrado_page')
 @SysConfig.SERVER.route('/welcome_page', methods=['POST', 'GET'])
+@SysConfig.SERVER.route('/admin_users_page')
 @login_required
 def load_mask_page():
     print('Entra aqui con metodo request {}'.format(request.method))

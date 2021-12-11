@@ -5,23 +5,51 @@ from flask_login import UserMixin
 import re
 
 
+COLUMNS = ['id', 'Username', 'Confirm', 'Email', 'UserKnow', 'level', 'Password']
+USERS_NAME_TXT = 'Users_new_format.txt'
+
+
 def is_new_user(username: str, email, password):
 
     try:
-        df = pd.read_csv('Users.txt', sep='\t')
+        df = pd.read_csv(USERS_NAME_TXT, sep='\t')
     except Exception:
-        df = pd.DataFrame([], columns=['id', 'Username', 'Confirm', 'Email', 'Password', 'UserKnow', 'level'])
+        df = pd.DataFrame([], columns=COLUMNS)
 
     try:
         if username not in df['Username'].unique() and email not in df['Email'].unique():
-            new_df = pd.DataFrame([], columns=['id', 'Username', 'Confirm', 'Email', 'Password', 'UserKnow', 'level'])
+            new_df = pd.DataFrame([], columns=COLUMNS)
             password = generate_password_hash(password)
             random_id = int(np.random.random() * (2 ** 20 - 1))
-            new_df = new_df.append(dict(zip(new_df.columns, [random_id, username.lower(), False, email, password,
-                                                             False, 1])),
+            new_df = new_df.append(dict(zip(new_df.columns, [random_id, username.lower(), False, email,
+                                                             False, 1, password])),
                                    ignore_index=True)
             df_to_save = new_df.append(df)
-            df_to_save.to_csv('Users.txt', sep='\t', index=False)
+            df_to_save.to_csv(path_or_buf=USERS_NAME_TXT, sep='\t', index=False)
+            return True
+        else:
+            return False
+    except Exception as e:
+        print('ERROR: {}'.format(e))
+        return False
+
+
+def add_the_user(username: str, email, id_user: int,
+                 level: int):
+
+    try:
+        df = pd.read_csv(USERS_NAME_TXT, sep='\t')
+    except Exception:
+        df = pd.DataFrame([], columns=COLUMNS)
+
+    try:
+        if username not in df['Username'].unique() and email not in df['Email'].unique():
+            new_df = pd.DataFrame([], columns=COLUMNS)
+            new_df = new_df.append(dict(zip(new_df.columns, [id_user, username.lower(), False, email, 
+                                                             True, level, 'no_password_yet'])),
+                                   ignore_index=True)
+            df_to_save = new_df.append(df)
+            df_to_save.to_csv(path_or_buf=USERS_NAME_TXT, sep='\t', index=False)
             return True
         else:
             return False
@@ -33,7 +61,7 @@ def is_new_user(username: str, email, password):
 def is_user(email):
 
     try:
-        df = pd.read_csv('Users.txt', sep='\t', index_col=0)
+        df = pd.read_csv(USERS_NAME_TXT, sep='\t', index_col=0)
     except Exception:
         return False
 
@@ -48,7 +76,7 @@ def is_user_confirmed(email):
     if email is None:
         return value
     try:
-        df = pd.read_csv('Users.txt', sep='\t', index_col=0)
+        df = pd.read_csv(USERS_NAME_TXT, sep='\t', index_col=0)
         value = list(df[df['Email'] == email]['Confirm'])[0]
     except Exception:
         value = False
@@ -60,13 +88,11 @@ def check_user(email, password):
 
     if is_user(email):
         try:
-            df = pd.read_csv('Users.txt', sep='\t')
+            df = pd.read_csv(USERS_NAME_TXT, sep='\t')
         except Exception:
-            df = pd.DataFrame([], columns=['id', 'Username', 'Confirm', 'Email', 'Password', 'UserKnow', 'level'])
+            df = pd.DataFrame([], columns=COLUMNS)
 
         password_hash = list(df[df['Email'] == email]['Password'])[0] # df['Password'].where(df['Email'] == email)[0]
-
-        # print('Es correcta la constraseña? {}'.format(check_password_hash(password_hash, password)))
 
         return check_password_hash(password_hash, password)
     else:
@@ -75,8 +101,7 @@ def check_user(email, password):
 
 def user_get_password_hash(email):
     try:
-        df = pd.read_csv('Users.txt', sep='\t')
-        # password_hash = df['Password'].where(df['Email'] == email)[0]
+        df = pd.read_csv(USERS_NAME_TXT, sep='\t')
         password_hash = list(df[df['Email'] == email]['Password'])[0]
     except Exception:
         password_hash = None
@@ -85,8 +110,7 @@ def user_get_password_hash(email):
 
 def user_get_id(email):
     try:
-        df = pd.read_csv('Users.txt', sep='\t')
-        # id_user = int(float(df['id'].where(df['Email'] == email)[0]))
+        df = pd.read_csv(USERS_NAME_TXT, sep='\t')
         id_user = list(df[df['Email'] == email]['id'])[0]
     except Exception:
         id_user = None
@@ -95,8 +119,7 @@ def user_get_id(email):
 
 def user_get_name(id: int):
     try:
-        df = pd.read_csv('Users.txt', sep='\t')
-        # id_user = int(float(df['id'].where(df['Email'] == email)[0]))
+        df = pd.read_csv(USERS_NAME_TXT, sep='\t')
         user_name = list(df[df['id'] == id]['Username'])[0]
     except Exception:
         user_name = 'Fallo get name'
@@ -157,10 +180,9 @@ def check_password_strength(password):
 
 def confirm_is_know_user(email):
     try:
-        df = pd.read_csv('Users.txt', sep='\t')
-        # id_user = int(float(df['id'].where(df['Email'] == email)[0]))
+        df = pd.read_csv(USERS_NAME_TXT, sep='\t')
         df.at[list(df[df['Email'] == email].index)[0], 'UserKnow'] = True
-        df.to_csv('Users.txt', sep='\t', index=False)
+        df.to_csv(path_or_buf=USERS_NAME_TXT, sep='\t', index=False)
         return True
     except Exception:
         id_user = False
@@ -169,21 +191,18 @@ def confirm_is_know_user(email):
 
 def is_know_used(email):
     try:
-        df = pd.read_csv('Users.txt', sep='\t')
-        # id_user = int(float(df['id'].where(df['Email'] == email)[0]))
+        df = pd.read_csv(USERS_NAME_TXT, sep='\t')
         id_user = list(df[df['Email'] == email]['UserKnow'])[0]
     except Exception:
         id_user = False
-    # print('El usuario esta confirmado? {}'.format(id_user))
     return id_user
 
 
 def confirm_user(email):
     try:
-        df = pd.read_csv('Users.txt', sep='\t')
-        # id_user = int(float(df['id'].where(df['Email'] == email)[0]))
+        df = pd.read_csv(USERS_NAME_TXT, sep='\t')
         df.at[list(df[df['Email'] == email].index)[0], 'Confirm'] = True
-        df.to_csv('Users.txt', sep='\t', index=False)
+        df.to_csv(path_or_buf=USERS_NAME_TXT, sep='\t', index=False)
         return True
     except Exception:
         id_user = False
@@ -192,24 +211,30 @@ def confirm_user(email):
 
 def is_confirmed_used(email):
     try:
-        df = pd.read_csv('Users.txt', sep='\t')
-        # id_user = int(float(df['id'].where(df['Email'] == email)[0]))
+        df = pd.read_csv(USERS_NAME_TXT, sep='\t')
         id_user = list(df[df['Email'] == email]['Confirm'])[0]
-        # df.at[list(df[df['Email'] == email].index)[0], 'Confirm'] = True
-        # df.to_csv('Users.txt', sep='\t', index=False)
         return id_user
     except Exception:
         id_user = False
-    # print('El usuario esta confirmado? {}'.format(id_user))
+    return id_user
+
+
+def is_user_admin(idn: str):
+    try:
+        df = pd.read_csv(USERS_NAME_TXT, sep='\t')
+        id_user = list(df[df['id'] == idn]['level'])[0] == 0
+        return id_user
+    except Exception:
+        id_user = False
     return id_user
 
 
 def change_new_password(email, new_password):
     try:
-        df = pd.read_csv('Users.txt', sep='\t')
+        df = pd.read_csv(USERS_NAME_TXT, sep='\t')
         new_token_password = generate_password_hash(new_password)
         df.loc[df['Email'] == email, 'Password'] = new_token_password
-        df.to_csv('Users.txt', sep='\t', index=False)
+        df.to_csv(path_or_buf=USERS_NAME_TXT, sep='\t', index=False)
         return True
     except Exception:
         return False

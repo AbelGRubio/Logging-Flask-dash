@@ -1,0 +1,6 @@
+dash
+pandas
+numpy
+dash-bootstrap-components>=1.0.0
+flask
+flask-login
