@@ -23,7 +23,6 @@ layout = html.Div(
 @SysConfig.APP.callback(Output("page-content", "children"), [Input("url_mask", "pathname")])
 @login_required
 def display_page(pathname):
-    print(' {} -- {}'.format(pathname, current_user))
     if pathname == '/admin_alarms_page':
         layout_to_show = admin_alarms_page.layout
     elif pathname == '/registrado_page':

@@ -4,6 +4,7 @@ from Configuration.admin_users import is_confirmed_used, is_know_used, confirm_u
 from flask_login import login_required
 from flask import request
 from flask_login import current_user
+from Fun.send_email import SALT_MAIL_CONFIRM, SALT_MAIL_RECOVER, SALT_MAIL_KNOW_USER
 
 
 # @@@@@@@@@@@@@@@@@@@ ADDING ROUTES @@@@@@@@@@@@@
@@ -12,7 +13,7 @@ from flask_login import current_user
 @SysConfig.SERVER.route('/confirmed_email_page_<token>')
 def load_confirmed_email_page(token):
     try:
-        email_date = SysConfig.GEN_TOKENS.loads(token, salt='email-confirm', max_age=SysConfig.MAX_AGE_TOKENS)
+        email_date = SysConfig.GEN_TOKENS.loads(token, salt=SALT_MAIL_CONFIRM, max_age=SysConfig.MAX_AGE_TOKENS)
         email = email_date.split('_')[0]
         confirm_user(email)
         if is_know_used(email):
@@ -30,7 +31,7 @@ def load_confirmed_email_page(token):
 @SysConfig.SERVER.route('/confirmed_is_know_user_page_<token>')
 def load_confirmed_is_know_user_page(token):
     try:
-        email_date = SysConfig.GEN_TOKENS.loads(token, salt='email-confirm', max_age=86400)
+        email_date = SysConfig.GEN_TOKENS.loads(token, salt=SALT_MAIL_KNOW_USER, max_age=86400)
         email = email_date.split('_')[0]
         import Pages.confirmed_is_know_user_page as confirmed_is_know_user_page
         confirmed_is_know_user_page.USER_NAME = email
@@ -60,7 +61,7 @@ def load_forbidden_page():
 @SysConfig.SERVER.route('/new_password_page_<token>')
 def load_new_password_page(token):
     try:
-        email_date = SysConfig.GEN_TOKENS.loads(token, salt='email-confirm',
+        email_date = SysConfig.GEN_TOKENS.loads(token, salt=SALT_MAIL_RECOVER,
                                                 max_age=SysConfig.MAX_AGE_TOKENS)
         email = email_date.split('_')[0]
         if is_know_used(email) and is_confirmed_used(email):

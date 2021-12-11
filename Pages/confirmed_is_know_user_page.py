@@ -36,16 +36,6 @@ def output_waiting(n_clicks):
         print('Confirmed is_know_user')
         if confirm_is_know_user(USER_NAME):
             send_mail_confirmation(USER_MAIL, USER_NAME)
-        # el_correo = '{}_{}'.format(USER_NAME, str(datetime.datetime.now()))
-        # SysConfig.TOKEN = SysConfig.GEN_TOKENS.dumps(el_correo, salt='email-confirm')
-        # url_token = 'http://{}:{}/confirmed_email_page_{}'.format(SysConfig.IP_HOST,
-        #                                                           SysConfig.PORT_HOST,
-        #                                                           SysConfig.TOKEN)
-        # mensage = create_email(is_confirmation=True,
-        #                        url_token=url_token,
-        #                        user_name=USER_NAME,
-        #                        email=USER_NAME)
-        # send_mail(mensage)
         return '/sign_in_page'
     else:
         print('Pasa')

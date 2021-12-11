@@ -9,11 +9,15 @@ from Configuration import LOGGER
 from Fun.email_content import CONFIRMATION_CONTENT, RECUPERATION_CONTENT, IS_KNOW_CONTENT
 import datetime
 
+SALT_MAIL_CONFIRM = 'mail-confirm'
+SALT_MAIL_RECOVER = 'mail-recover'
+SALT_MAIL_KNOW_USER = 'mail-know-user'
+
 
 def send_mail_recover(mail, username):
     try:
         el_correo = '{}_{}'.format(mail, str(datetime.datetime.now()))
-        SysConfig.TOKEN = SysConfig.GEN_TOKENS.dumps(el_correo, salt='email-confirm')
+        SysConfig.TOKEN = SysConfig.GEN_TOKENS.dumps(el_correo, salt=SALT_MAIL_RECOVER)
         url_token = 'http://{}:{}/new_password_page_{}'.format(SysConfig.IP_HOST, SysConfig.PORT_HOST,
                                                                SysConfig.TOKEN)
         mensage = create_email(is_confirmation=False,
@@ -28,7 +32,7 @@ def send_mail_recover(mail, username):
 def send_mail_confirmation(mail, username):
     try:
         el_correo = '{}_{}'.format(mail, str(datetime.datetime.now()))
-        SysConfig.TOKEN = SysConfig.GEN_TOKENS.dumps(el_correo, salt='email-confirm')
+        SysConfig.TOKEN = SysConfig.GEN_TOKENS.dumps(el_correo, salt=SALT_MAIL_CONFIRM)
         url_token = 'http://{}:{}/confirmed_email_page_{}'.format(SysConfig.IP_HOST,
                                                                   SysConfig.PORT_HOST,
                                                                   SysConfig.TOKEN)
@@ -44,7 +48,7 @@ def send_mail_confirmation(mail, username):
 def send_mail_is_know_user(email, username):
     try:
         el_correo = '{}_{}'.format(email, str(datetime.datetime.now()))
-        SysConfig.TOKEN = SysConfig.GEN_TOKENS.dumps(el_correo, salt='email-confirm')
+        SysConfig.TOKEN = SysConfig.GEN_TOKENS.dumps(el_correo, salt=SALT_MAIL_KNOW_USER)
         url_token = 'http://{}:{}/confirmed_is_know_user_page_{}'.format(SysConfig.IP_HOST,
                                                                          SysConfig.PORT_HOST,
                                                                          SysConfig.TOKEN)
