@@ -105,6 +105,7 @@ def add_row(n_clicks, n_clicks_save, n_clicks_token_confirm,
         df_old.to_csv(path_or_buf=USERS_NAME_TXT, sep='\t', index=True)
         status_message = 'User database updated'
         COUNTER_SAVE += 1
+        reload_page()
 
     if n_clicks_token_recover != COUNTER_SEND_TOKEN_RECOVER:
         status_message = 'New token sent for change password'

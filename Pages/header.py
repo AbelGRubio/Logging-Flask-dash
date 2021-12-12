@@ -110,10 +110,10 @@ def log_out_header(n_clicks):
 
     if current_user.is_authenticated and n_clicks > 0:
         print('Id of current user {}'.format(current_user.id))
-        try:
-            del SysConfig.CURRENT_USERS[current_user.id]
-        except Exception:
-            pass
+        # try:
+        #     del SysConfig.CURRENT_USERS[current_user.id]
+        # except Exception:
+        #     pass
         print('Va a salir el usuario {}'.format(current_user.id))
         logout_user()
         from Pages.routes import load_sign_in_page

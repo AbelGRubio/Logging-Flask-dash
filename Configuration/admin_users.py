@@ -140,12 +140,10 @@ def user_get_name(id: int):
 
 
 class User(UserMixin):
-    def __init__(self, id_user, email: str, password_hash: str, username: str):
+    def __init__(self, id_user, username: str):
         UserMixin.__init__(self)
         self.id = id_user
-        self.email = email
         self.username = username
-        self.password_hash = password_hash
 
     def __repr__(self):
         return "{}".format(self.id)

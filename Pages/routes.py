@@ -99,8 +99,6 @@ def load_sign_in_page():
 @SysConfig.SERVER.route('/admin_users_page')
 @login_required
 def load_mask_page():
-    print('Entra aqui con metodo request {}'.format(request.method))
-    print('El usuario que ha entrado es {}'.format(current_user.username))
     import Pages.mask_page as mask_page
     SysConfig.APP.layout = mask_page.layout
     return SysConfig.APP.index()

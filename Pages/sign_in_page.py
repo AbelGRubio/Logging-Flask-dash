@@ -53,12 +53,9 @@ def update_sign_in(n_clicks, email, password):
     if check_user(email, password):
         pathname = '/sign_in_page'
         try:
-            password_hash = user_get_password_hash(email)
             id_user = user_get_id(email)
             name_user = user_get_name(id_user)
             new_user = User(id_user=id_user,
-                            email=email,
-                            password_hash=password_hash,
                             username=name_user)
             SysConfig.CURRENT_USERS[int(id_user)] = new_user
             login_user(new_user)
@@ -69,9 +66,11 @@ def update_sign_in(n_clicks, email, password):
                     pathname = '/beginning_page'
                     return res, pathname
                 else:
-                    print('Pasa')
+                    pass
+                    # print('Pasa')
         except Exception as e:
-            print('FALLO {}'.format(e))
+            # print('FALLO {}'.format(e))
+            pass
     else:
         res = 'The password is incorrect'
     # redirect(pathname, code=302)

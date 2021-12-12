@@ -25,7 +25,6 @@ if __name__ == '__main__':
     SysConfig.APP.title = 'ALERION'
 
     SysConfig.LOGIN_MANAGER.init_app(SysConfig.SERVER)
-    SysConfig.LOGIN_MANAGER.login_view = '/sign_in_page'
 
     import Pages.sign_in_page as sign_in_page
     SysConfig.APP.layout = sign_in_page.layout

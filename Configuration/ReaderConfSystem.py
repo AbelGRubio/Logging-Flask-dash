@@ -2,8 +2,9 @@ import configparser
 import sys
 import os
 from Configuration import LOGGER
-from flask_login import LoginManager, UserMixin
+from flask_login import LoginManager
 from itsdangerous import URLSafeTimedSerializer
+from cryptography.fernet import Fernet
 
 
 ReaderConfig = configparser.ConfigParser()
@@ -51,11 +52,16 @@ try:
 
     CALLBACK_HEADER = False
 
+    # @@@@@@@@@@@@ LOGIN MANAGER CONFIGURATION @@@@@@@@@@@@@@@@@@
     LOGIN_MANAGER = LoginManager()
-
+    LOGIN_MANAGER.session_protection = "strong"
+    LOGIN_MANAGER.login_view = '/sign_in_page'
+    LOGIN_MANAGER.login_message = 'Redirecting to log in page'
+    # @@@@@@@@@@@@@@@@@@@@@
     CURRENT_USERS = {}
 
-    SECRET = os.urandom(12)
+    SECRET = Fernet.generate_key()
+    MY_CIPHER = Fernet(SECRET)
 
     GEN_TOKENS = URLSafeTimedSerializer(SECRET)
     TOKEN = None
